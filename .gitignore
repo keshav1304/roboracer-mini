@@ -1,0 +1,64 @@
+# Large binary / video files
+*.mp4
+*.MP4
+*.mov
+*.MOV
+*.avi
+*.mkv
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+dist/
+*.egg
+
+# ROS2 / colcon workspace outputs (top-level and nested)
+**/build/
+**/install/
+**/log/
+
+# CMake artifacts
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+*.o
+*.a
+*.make
+link.txt
+
+# Donkeycar training data and models (large binary files)
+**/data/
+**/models/
+
+# Log files
+*.log
+*.roslog
+
+# Python virtual envs
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
