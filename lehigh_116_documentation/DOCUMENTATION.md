@@ -1,531 +1,316 @@
-# Documenting E116 by Lehigh University
-
-Setting-up, driving, developing racing algorithms on a 1/16-scale autonomous race car.  
-
-<p align="center">
-  <img src="Lehigh_Lab1.jpg" alt="Lab Setup" width="700"/>
-</p>
-
-# Week 1 — Understanding the Car
-
-The E116 is built on a **Traxxas 1/16** chassis. This is a small all-wheel-drive car with Ackerman steering geometry. The stock Traxxas electronics (ESC, receiver) handle manual control, while an **NVIDIA Jetson Orin Nano** and a **custom carrier board** sit on top to enable autonomous operation. An **Intel RealSense D435i** stereo camera provides depth + RGB perception.
-
-[![Video walkthrough of hardware](Hardware_overview.png)](Videos/Week1/Hardware_Overview.mp4)
-
-## Bill of Materials
-
-TODO: correct links for these:
-
-| Component name | model number | website and price | function and features |
-| :--- | :--- | :--- | :--- |
-| Traxxas 1/16 scale car | [1/16 E-Revo VXL TSM](https://traxxas.com) | | |
-| Brushless motor | Velineon® 380 | | |
-| RC Handheld | TQi 2.4GHz TSM | | |
-| Dual Battery Charger | EZ-Peak 8 amp 3s | [Traxxas](https://traxxas.com) | |
-| LiPo battery charger | X1, 200W | [OVONIC](https://ampow.com) | |
-| LiPo battery | | OVONIC | |
-| NiMH battery | | Traxxas | |
-| Real-sense Stereo camera | [D435](https://www.intelrealsense.com/depth-camera-d435/) | Intel → Real Sense | |
-| Jetson Development Kit | [Orin Nano 8 GB](https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/) | | |
-| LU Carrier Board | Version 2.1 | $105 in 2023 | See Appendix B |
-| Estimated total cost | E116 AutoCar V1 | Lehigh ECE | |
-
-## Carrer Board
-
-This is a custom designed PCB to interface the Jetson with the power supply and the rest of the car's components.
-
-The carrier board is a custom PCB that sits between the Jetson and the Traxxas chassis. It handles everything the Jetson can't do natively — power regulation, motor control signals, sensor routing, and status monitoring.
-
-![Carrier Board](Videos/Week1/carrier_board.png)
+# Documenting our journey with E116 by Lehigh University
 
 
-| Block | Function |
-|-------|----------|
-| **Main Power** | Barrel connector input, voltage regulation, battery level checker |
-| **Jetson Signal Interface** | Routes GPIO, I2C, UART between carrier and Orin Nano header |
-| **Drive Control** | PWM output signals to the motor ESC and steering servo |
-| **Sensing & Control** | Connectors for external sensors |
-| **Comm Ports** | I2C and UART breakout headers for peripherals |
-| **External IMU Interface** | Dedicated connector for an inertial measurement unit |
-| **Status LEDs 1–4** | Indicate: power good, drive-train active, Jetson alive, RC link |
-| **Mode Switch** | Selects between operating modes |
-| **0.92″ OLED Screen** | Displays IP address, WiFi name, and real-time status |
+## Table of Contents
+
+1. [Week 1 — Hardware Familiarization &amp; Linux Basics](#week-1)
+2. [Week 2 — Teleop, PWM Tuning &amp; ROS 2 Introduction](#week-2)
+3. [Week 3 — Stereo Camera &amp; AprilTag Detection](#week-3)
+4. [Week 4 — Gap Follow Algorithm &amp; Race Preparation](#week-4)
+5. [References](#references)
 
 ---
 
-## Charging the batteries
+## Week 1 — Hardware Familiarization & Linux Basics
 
-The car uses two types of rechargeable batteries:
+### Overview
 
-| Battery | Spec | Connector | Car Slot |
-|---------|------|-----------|----------|
-| **LiPo** | OVONIC 11.1V 1400mAh 3S 50C | XT60 power + 4-pin JST XH balance | Left |
-| **NiMH** | Traxxas 7.2V 1200mAh 6-cell | Traxxas connector | Right |
+Week 1 covered the E116 car hardware, batteries, motor/ESC, and basic Ubuntu on the Jetson Orin Nano.
 
-Both batteries were measured with a multimeter in DC V mode. The readings were compared against the label values, and the LiPo was then cross-checked with a standalone battery tester — both readings matched.
+### Key Concepts
 
-| Parameter | LiPo (3S) | NiMH (6-cell) |
-|-----------|-----------|---------------|
-| Nominal voltage | 11.1V (3.7V × 3) | 7.2V (1.2V × 6) |
-| Fully charged | ~12.6V (4.2V/cell) | ~8.4V (1.4V/cell) |
-| Capacity | 1400mAh | 1200mAh |
-| C rating | 50C → 70A max burst | — |
-| Low voltage warning | ~9.9V (3.3V/cell) | — |
+#### 1.1 Battery Chemistry
 
-The C rating determines max safe discharge: 50C × 1.4A = 70A burst. The battery checker on the carrier board warns when the LiPo drops below ~3.3V/cell.
+| Battery        | Chemistry | Nominal | Use              |
+| -------------- | --------- | ------- | ---------------- |
+| LiPo (OVONIC)  | 3S LiPo   | 11.1 V  | Jetson / compute |
+| NiMH (Traxxas) | 6-cell    | 7.2 V   | ESC / drivetrain |
 
-Here is how to charge both:
+LiPo max discharge current: $I_{max} = C \times \text{Capacity (Ah)}$ (e.g. 50C × 1.4 Ah ≈ 70 A).
 
-[![Charging Traxxas NiMH](NiMH.png)](Assets/Week1/NiMH.mp4)
+Do not run LiPo below ~3.5 V/cell; the onboard checker beeps near cutoff.
 
-[![Charging Ovonic LiPo](LiPo.png)](Assets/Week1/LiPo.mp4)
+For desk work the LiPo can be swapped for a barrel jack so the Jetson stays on AC.
 
-The following steps were followed to plug the battery into the car:
-- **NiMH** - plug into traxxas connector to connect to drivetrain, and place in the right battery slot
-- **LiPo** - plug via 4S JST balance lead to the carrier board, and place in the left battery slot 
-- Close the covers and tuck all cables away from the wheels
-- The battery checker on the carrier board beeped loudly and display ~11.1V before proceeding further
+[![Charging Traxxas NiMH]()](NiMH.mp4)
 
-Some of the battery best practices we learned are:
-- **Never fully drain a LiPo** — deep discharge below 3.0V/cell permanently damages the cells
-- **Charge at 1C or below** — 1A for a 1400mAh pack. Faster charging degrades battery life
-- **Rubber-band a battery** after it's fully charged so you can tell which ones are ready at a glance
-- **Unplug all batteries** when leaving the lab — even a slow parasitic drain overnight degrades LiPo chemistry
-- **Storage voltage** — if not using for an extended period, store LiPo at ~3.8V/cell (~11.4V for 3S)
+[![Charging Ovonic LiPo]()](LiPo.mp4)
 
+#### 1.2 Motor & ESC
 
-## Powering on the car
+The car uses a Velineon 380 brushless motor and a Traxxas VXL-3m ESC (electronic commutation, no brushes).
 
-The car was powered on, following these steps:
-- Power jack on the carrier board was connected through a power adapter to a wall outlet
-- NiMH battery was connected to its connector
-- Switch on carrier board was flipped
-
-To access the Jetson, a monitor was connected via the display port and a keyboard and mouse were connected via USB-A.
-
-[![Video showing power on process](Poweron.png)](Assets/Week1/Power_On.mp4)
-
-The NVIDIA splash screen appears, followed by the Ubuntu 22.04 login window. The system was logged into using known credentials. If the Jetson has not already been setup, then create an account. Connect to a local Wi-Fi network via the GUI interface that comes up on the display.
-
-TODO: 
->
-> ### Questions to check concepts:
->
-> Q1.1. What are the types of batteries used in the car? What is the difference between a rechargeable battery and a primary battery? 
->
-> Q1.2. What is the difference between an AC power source and a DC power source?  What is a DMM?
->
-> Q1.3 What are the types of batteries used in the car? What is the difference between a rechargeable battery and a primary battery? 
->
-> Q1.4 What is the voltage of the LiPo battery when it is fully charged?  At what voltage would the battery checker warn you that the LiPo battery needs to be charged?
->
-> Q1.5 What is an all-wheel drive system? What is an Ackerman steering system?  
->
-> Q1.6 What are the differences between a brushed motor and a brushless motor? 
->
-> Q1.7 What are the differences between the single and stereo cameras? 
->
-> Q1.8 What is a GPU? How different is it from a CPU? What is an Nvidia Jetson?
->
-> Q1.9 What problems did you encounter working through the hardware Part of this lab? 
->
-> Q1.10 What did you learn or enjoy most in the Hardware Part of this lab? What suggestions would you explore further for your own interests? 
->
-
-## Installing packages and requirements
-
-TODO (from TA setup instructions)
-
-## Getting familiar with Ubuntu and the Jetson's software
-
-The cheat sheet below will help with navigating the Terminal:
-
-| Command | What It Does |
-|---------|-------------|
-| `ls -al` | List all files (including hidden) with permissions |
-| `cd` / `cd ..` / `cd ~` | Navigate into folder / up one level / home |
-| `mkdir name` | Create a new directory |
-| `cp src dest` | Copy a file |
-| `mv src dest` | Move or rename |
-| `rm -r dir` | Delete a directory and its contents |
-| `grep pattern file` | Search for text inside a file |
-| `chmod 755 file` | Set permissions: owner rwx, others rx |
-| `Tab` | Auto-complete file/folder names |
-| `Ctrl+C` | Kill a running process |
-| `Ctrl+Z` | Suspend a process |
-| `Ctrl+D` | Exit the current shell |
+The E116 uses a Velineon® 380 brushless motor paired with an Electronic Speed Controller (ESC). The ESC drives the motor by switching the phase currents electronically.
 
 ---
 
-In the terminal, the Documents folder was opened and a new directory called Week1 was made. Inside this, the ```game.py``` file was created and the contents written.
+#### 1.3 GPU vs. CPU — NVIDIA Jetson Orin Nano
+
+|            | CPU                    | GPU                           |
+| ---------- | ---------------------- | ----------------------------- |
+| Core count | Few (high clock speed) | Thousands (lower clock speed) |
+| Best for   | Serial, branchy logic  | Parallel numerical workloads  |
+| On Jetson  | ARM Cortex-A78AE       | Ampere GPU (1024 CUDA cores)  |
+
+The **NVIDIA Jetson Orin Nano** is a compact **System-on-Module (SoM)** designed for edge AI inference combining CPU, GPU, and memory in a low-power package suitable for an autonomous vehicle.
+
+---
+
+#### 1.4 Ubuntu Linux Basics
+
+Key commands practiced in the terminal:
 
 ```bash
-$ cd ~/Documents
-$ mkdir Week1
-$ cd Week1
-$ vim game.py
+ls -al               # list files with permissions
+cd folder / cd ..    # navigate directories
+mkdir new_folder     # create directory
+cp file1 file2       # copy file
+mv src dst           # move/rename
+rm -r folder         # remove recursively
+chmod a+x file.py    # make executable
+grep pattern file    # search text
+python3 script.py    # run Python script
 ```
 
-TODO: Access the game.py file in the codebase section.
+### Demo Video
 
-A tutorial for ```vim``` is here: https://missing.csail.mit.edu/2020/editors/
+[![Video walkthrough of hardware]()](Hardware_Overview.mp4)
 
-The attribute of the ```game.py``` file was changed to be executable for all users and then it was executed.
+### Week 1 — Problems Encountered
+
+LiPo charge settings (voltage/current) were unclear at first. The Traxxas pack had no simple way to see state of charge, and multimeter readings were unreliable. A Traxxas charger with a built-in display was used instead.
+
+## Week 2 — Teleop, PWM Tuning & ROS 2 Introduction
+
+### Overview
+
+Week 2 added keyboard teleop, per-car PWM tuning for servo and ESC, and an intro to ROS 2 Humble (Turtlesim, pub/sub).
+
+### Key Concepts
+
+#### 2.1 PWM tuning
+
+E116 PWM runs at 200 Hz. Duty cycle is set as a percentage; each step is about 0.39% ($100\%/256$).
+
+Tuned values were saved in `e116.yaml`:
+
+| Parameter              | Typical range   |
+| ---------------------- | --------------- |
+| `motor_forward_start`  | 30.00 – 31.50 % |
+| `motor_backward_start` | 27.50 – 29.00 % |
+| `servo_center`         | ~29.70 %        |
+
+![PWM for Servo](servo-pwm.png)
+![PWM for Motor](motor-pwm.png)
+
+#### 2.2 SSH
 
 ```bash
-$ chmod +x game.py
-$ python3 game.py
+ssh -X username@ipaddress
 ```
 
-> TODO: 
-> Questions to check concepts
-> 
-> Q2.1 What operating system did you use for this part of Week1 lab? What is the version of the operating system on the Jetson device?
-> 
-> Q2.2 How do you open a new terminal in Linux? How do you copy and paste a command in a Terminal?  
-> 
-> Q2.3 What is the difference between a sudo command and a normal command?
-> 
-> Q2.4 What text editing tool do you use on Linux? How do you save the edits? How do you like it?
-> 
-> Q2.5 How do you check and change the access property (r,w,x) of a file? Show the result of your exercise to TA.
-> 
-> Q2.6 What is tab completion and how do you use it? Demo this to TA. 
+`-X` forwards X11 so GUI apps can open on the laptop. Commands run on the Jetson.
 
-# Week 2 - Running Teleop and ROS
+[![Video of SSH]()](Week1_SSH.mp4)
 
-<!-- 
-WE NEVER DID THIS OLED SETUP BECAUSE IT NEVER WORKED
+#### 2.3 ROS 2 basics
 
-## 10 · OLED Display Setup
+Distribution: Humble.
 
-The carrier board has a **0.92″ OLED screen** (128×32 pixels, I2C interface, Waveshare module) that displays the car's IP address and WiFi network name — essential for SSH access later.
-
-### Setup
-
-`startup_files.zip` was extracted to the home directory, and the files were verified to be in place:
+```
+[Publisher] --> /topic --> [Subscriber]
+```
 
 ```bash
-$ cd ~
-$ ls
-  startupOLED.sh  startupOLED/  ...
-```
-
-The `startupOLED/` folder contains a Python script that communicates with the OLED over I2C using the `smbus` library.
-
-### Running It
-
-```bash
-$ ./startupOLED.sh &
-```
-
-The `&` runs it in the background and prints a process ID. The OLED should now display the WiFi name and IP address.
-
-If you see `ModuleNotFoundError: No module named 'smbus'`:
-```bash
-$ pip3 install smbus
-$ ./startupOLED.sh &
-```
-
-![OLED Running](assets/images/oled_running.jpg)
-<!-- OLED on the carrier board showing IP address and WiFi name -->
-
-<!-- ### How the Shell Script Works
-
-`startupOLED.sh` was opened in a text editor. It is a simple shell script that calls the Python program inside the `startupOLED/` folder, which initializes the I2C bus, reads the system's IP and WiFi information, and writes it to the OLED display buffer.
-
-https://github.com/user-attachments/assets/VIDEO_ID_HERE -->
-<!-- VIDEO: Running startupOLED.sh and seeing the IP appear on the OLED -->
-
-## Writing a program for Teleop and running it
-
-Using the Terminal, a new folder was created in ~/Documents for Week2 and then using vim a file called ```teleop_terminal.py``` was created.
-
-```bash
-$ cd ~/Documents
-$ mkdir Week2
-$ cd Week2
-$ vim teleop_terminal.py
-```
-
-The code in ```teleop_terminal.py``` is as follows:
-
-```python
-# TODO
-```
-
-[[ TODO: insert code walkthrough and explanations here ]]
-
-Running the python script and then using WASD keys to control the car (W - Forward,   A - Turn left,  S - Backward,  D - Turn right):
-
-[![Running teleop script](Teleop.png)](Assets/Week2/Week2_telop.mp4)
-
-If the code does not work, then double check that the ESC is blinking green. If it is not, then press the small blue button on the ESC.
-
-## PWM Tuning
-
-### Setting up SSH
-
-To tune the PWM for the car, the car would have to be run on the ground and not just on the desk. Thus, there needs to be a means of controlling the vehicle remotely and not only when plugged into a display. To enable this, SSH was setup.
-
-The Jetson was connected to the same Wi-Fi network as the laptop. Then, the following commands were run to find the IP address of the Jetson:
-
-```bash
-$ hostname -I
-```
-
-The IP address was then used to connect to the Jetson from a laptop using SSH.
-
-```bash
-$ ssh team1XX@<CAR_IP_ADDRESS>
-```
-
-SSH allows the Jetson terminal to be opened and controlled from another computer over the same Wi-Fi network, without needing to stay directly connected through a monitor, keyboard, and mouse.
-
-### How PWM Works on the E116
-
-The **servo PWM** port controls steering, and the **motor PWM** port controls speed through the ESC. Each car is built slightly differently, so you need to find the exact PWM parameters for your specific car.
-
-The PWM signal runs at **200 Hz**. The duty cycle is controlled by an **unsigned 8-bit integer** (0–255), mapping to 0–100% duty. This means the minimum step size is 100/256 ≈ 0.39%.
-
-The motor has a **deadband** in its PWM input, which is a range of duty cycles where the motor doesn't move. This prevents the car from jumping between forward and backward. There are also **transition bands** at the edges of the deadband where the motor just barely starts moving. Finding these edges is the goal of this step.
-
-The graphs below demonstrate this concept:
-
-![PWM for Servo](Assets/servo-pwm.png)
-![PWM for Motor](Assets/motor-pwm.png)
-
-We need to find the values of PWM duty cycle that are just at the point where the curves begin to bend, to find the minimum PWM for forward, backward, and turning left and right.   
-
-### PWM tuning for motor
-
-The following script, ```pwm_motor.py```, finds appropriate motor PWM values.
-
-```python
-# TODO: Insert code walkthrough and explanations here
-```
-
-The program prompts you to enter duty cycle values. You can type exact numbers (up to 2 decimal places) or use `+` and `-` for fine-tuning in 0.01 increments. For each value entered, the car runs for 0.6 seconds then stops. 
-
-This program was run when the car is on the ground, and not on a stand, because the PWM values are heavily influenced by friction on the surface that needs to be overcome.
-
-Before running the program, the LiPo was connected to its slot and tightly fastened in place. The AC-DC adapter, monitor, keyboard, and mouse from the car were disconnected from the car.
-
-The value at which the motor just barely starts moving, first forward, and then backward was noted down. These values were recorded for the motor calibration and will be used later.
-
-### PWM tuning for servo
-
-Here, the PWM value for the servo was found that allows the car to drive perfectly straight. This is the only reference needed to enable the servo to turn to other angles accurately. Here too, the car was controlled remotely via SSH from a host laptop.
-
-The following script was used:
-
-```python
-# TODO: Insert code walkthrough and explanations here
-```
-
-After opening `pwm_steering.py` in a text editor, the following values were updated:
-  - **Line 26**: `motor_forward_start` value
-  - **Line 27**: `motor_backward_start` value
-  - **Line 28**: desired speed (leave at 2 initially)
-
-Then the program was run with the car on the ground with a clear path straight ahead. Every time a new **servo_center** value was entered, the car would drive straight for a short distance and then stop. The straightness of the run was observed and the value was adjusted until the car drove straight. 
-
-In some cases, it helped to tune Line 28 (speed) or Line 62 (duration) in `pwm_steering.py` to test at different speeds and over longer distances.
-
-TODO: Enter video
-
-
-## ROS 2 Humble on the E116 Vehicle
-
-ROS 2 Humble was installed on the Jetson in a previous step. 
-
-Before any ROS-related project, the following commands were run once to ensure the ROS 2 underlay is sourced in every new terminal.
-
-```bash
-$ echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-$ echo "export ROS_LOCALHOST_ONLY=1" >> ~/.bashrc
-$ source ~/.bashrc
-```
-
-### Exploring ROS 2 with Turtlesim
-
-Turtlesim is a simple graphical simulator that demonstrates ROS 2 concepts. You need **4 terminals** for this:
-
-**Terminal 1** - Launched the turtlesim window:
-```bash
-$ ros2 run turtlesim turtlesim_node
-```
-
-**Terminal 2** - Drove the turtle with arrow keys:
-```bash
-$ ros2 run turtlesim turtle_teleop_key
-```
-
-**Terminal 3** - Inspected the ROS 2 graph:
-```bash
-$ ros2 node list          # showed active nodes
-$ ros2 topic list         # showed active topics
-$ ros2 node info /turtlesim
-$ ros2 topic echo /turtle1/cmd_vel    # showed velocity commands in real-time
-```
-
-**Terminal 4** - Launched the ROS 2 graph visualizer:
-```bash
-$ rqt_graph
-```
-
-This showed how nodes connect through topics. The `/teleop_turtle` node publishes `geometry_msgs/msg/Twist` messages on `/turtle1/cmd_vel`, which the `/turtlesim` node subscribes to.
-
-Alternatively, we can publish directly from the terminal:
-
-```bash
-$ ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist \
+ros2 node list
+ros2 topic list
+ros2 topic echo /turtle1/cmd_vel
+ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist \
   "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 1.8}}"
+ros2 run rqt_graph rqt_graph
 ```
 
-This makes the turtle drive in a circle. The `linear.x` field controls forward speed, `angular.z` controls rotation. Negative `x` drives backward, negative `z` turns the other way.
+[![Video of turtlesim]()](turtlesim.mov)
 
-TODO: Put video here
+### Demo Video
 
-### Building a ROS 2 Workspace with Colcon
+[Telop Video](Teleop.mp4)
+[PWM Tuning](PWM_Tuning.mp4)
 
-A workspace directory was created, the ROS 2 examples were cloned, and everything was built:
+### Week 2 — Problems Encountered
 
-```bash
-$ mkdir -p ~/ros2_ws/src
-$ cd ~/ros2_ws
-$ git clone https://github.com/ros2/examples src/examples -b humble
-$ colcon build --symlink-install
-$ colcon test
-$ source install/local_setup.bash
-```
-
-### Publisher/Subscriber Test
-
-The minimal C++ pub/sub example was run to verify the build:
-
-**Terminal 1** — Subscriber (waits for messages):
-```bash
-$ ros2 run examples_rclcpp_minimal_subscriber subscriber_member_function
-```
-
-**Terminal 2** — Publisher (sends numbered messages):
-```bash
-$ ros2 run examples_rclcpp_minimal_publisher publisher_member_function
-```
-
-The subscriber prints each message as it arrives, confirming the ROS 2 middleware, build system, and node communication are all working.
-
-TODO: Put video here
-
-TODO: 
-> Questions to check concepts
-> Q2.1 What does PWM stand for in the E116? What is the frequency of the PWM used on E116? What is the duty cycle of a PWM? 
-> 
-> Q2.2. How many numbers can be represented by an 8-bit integer? What is the step size if you represent 0 - 100 by an unsigned 8-bit integer?
-> 
-> Q2.3 What are the values of PWM parameters for your car? motor_forward_start, motor_backward_start, and servo_center.
-> 
-> Q2.4 What is the Robotics Operating System (ROS)? What is the version of ROS installed on the Jetson device? 
-> 
-> Q2.5 What is the difference between a topic and a node in ROS 2? What is the difference between a publisher and a subscriber in ROS 2?
-> 
-
-
-
-# Week 3 - Computer Vision and Teleop on E116
-
-We started by creating a new ROS workspace and package.
-
-```bash
-$ mkdir -p ~/team_ws/src
-$ cd ~/team_ws/src
-$ ros2 pkg create --build-type ament_python e116
-```
-
-Other files and folders were added to the ```e116``` package to create the folder structure and files in the code under Week 3. This was double checked using the following commands:
-
-```bash
-$ cd ~/team_ws/src/e116
-$ls -l
-```
-
-The output should be something like:
-
-```bash
-team100@ubuntu:~/team_ws/src/e116$ ls -l
-total 44
-drwxrwxr-x 2 team100 team100 4096 Mar  5 03:41 config
-drwxrwxr-x 3 team100 team100 4096 Mar  5 03:46 e116
-drwxrwxr-x 5 team100 team100 4096 Mar  4 18:48 launch
--rw-rw-r-- 1 team100 team100  856 Mar  4 18:48 package.xml
-drwxrwxr-x 2 team100 team100 4096 Mar  4 18:48 resource
--rw-rw-r-- 1 team100 team100   77 Mar  4 18:48 setup.cfg
--rw-rw-r-- 1 team100 team100 1169 Mar  5 03:30 setup.py
-drwxrwxr-x 2 team100 team100 4096 Mar  4 18:48 test
-```
-
-Then, the following commands were run to allow permissions:
-```bash
-$ cd ~/team_ws/src
-$ chmod +x ~/team_ws/src/e116/e116/*.py              
-$ chmod +x ~/team_ws/src/e116/launch/*.launch.py
-```
-
-And then, the following commands were run to clone the April Tag libraries and ROS wrapper, to enable April Tag detection:
-```bash
-$ git clone https://github.com/AprilRobotics/apriltag.git
-$ git clone https://github.com/christianrauch/apriltag_ros.git
-$ git clone https://github.com/christianrauch/apriltag_msgs.git
-```
-The file structure should look as follows:
-```bash
-team100@ubuntu:~/roboracer_116_lehigh/team_ws/src$  ls -l
-total 28
-drwxrwxr-x  7 team100 team100 4096 Mar 16 01:01 apriltag
-drwxrwxr-x  4 team100 team100 4096 Mar 16 01:02 apriltag_msgs
-drwxrwxr-x  6 team100 team100 4096 Mar 16 01:02 apriltag_ros
-drwxrwxr-x 10 team100 team100 4096 Mar  5 03:30 e116
-```
-
-The config file in ```~/team_ws/src/e116/config/tags_36h11.yaml``` was moved to ```~/team_ws/src/apriltag_ros/cfg/```. And similarly, the launch file in ```/team_ws/src/e116/launch/rs2camera.launch.yml```  was moved to ```~/team_ws/src/apriltag_ros/launch/```.
-
-Next, we put the tuning parameters found in Week 2 into the ROS 2 configuration files. The file ```~/team_ws/src/e116/config/e116.yaml``` was edited with the new ```motor_forward_start```, ```motor_backward_start```, and ```servo_center``` values.
-
-The following was run to build the packages:
-```bash
-$ cd ~/team_ws
-$ rosdep install --from-paths src --ignore-src -r -y     #install any missing packages
-$ colcon build
-```
-
-
-
-
-TODO:
-> Questions to check concepts:
-> Q1.1 What is the name of the workspace? What is the name of the package you created?  What command did you use to create a new ROS package? 
-> Q1.2 What folders does “ros2 pkg create” generate in the /src/ folder?  What folders does colcon build generate the first time you run it?
-> Q1.3 What happens if you don’t “source install/setup.bash”?
-> Q1.4 How do you change the attributes of the launch files in the E116 package to be executable?
-> Q2.1. What kind of camera does the E116 car use? 
-> Q2.2. What is an AprilTag? What format of the tag did you use in this lab?
-> Q2.3. What colors correspond to the x, y, z axes in the RViz display of the AprilTag? 
-
-
+The drive battery died quickly during PWM tuning. Full charge (12.6 V on the 3S LiPo) was needed; at 12.3 V runtime was already too short to finish a session.
 
 ---
 
-## Safety
+## Week 3 — RealSense & AprilTags
 
-> **Car on a stand** when drive-train is powered — wheels spin fast and the car will launch off the bench.  
-> **Power off** before disconnecting anything — hotplugging DC can arc and damage connectors.  
-> **Match polarity every time** — reversing a LiPo kills the battery and the board.  
-> **Unplug all batteries and switch off RC handheld** when done.  
-> **Keep cables away from wheels** during teleop — they will get tangled.  
-> **Hold connectors, not wires** when unplugging.
+### Overview
 
--
+Week 3 brought up the Intel RealSense D435 on ROS 2, built a workspace with `apriltag_ros`, and moved teleop into launch files.
 
-Enable GitHub Pages: **Settings → Pages → Source → main branch → / (root)**.  
-Live at `https://YOUR_USERNAME.github.io/REPO_NAME/`.
+### Key Concepts
+
+#### 3.1 ROS 2 Workspace and Package Structure
+
+```
+team_ws/
+├── src/
+│   ├── e116/
+│   │   ├── e116/
+│   │   ├── launch/
+│   │   └── config/
+│   ├── apriltag/
+│   ├── apriltag_ros/
+│   └── apriltag_msgs/
+├── build/
+├── install/
+└── log/
+```
+
+```bash
+cd ~/team_ws
+colcon build
+source install/setup.bash
+```
+
+Re-source `install/setup.bash` after every build.
+
+#### 3.2 AprilTags
+
+Tag family: tag36h11. Each tag has an ID; `apriltag_ros` publishes pose in the camera frame.
+
+![Example AprilTag (tag36h11 family, ID=1)](Apriltag.png)
+
+#### 3.3 RViz
+
+Tag detections show up as TF frames in RViz (X forward, Y left, Z up).
+
+![Video of April Tag tracking in RViz](April Tag Detection.MOV)
+
+#### 3.4 Ackermann topic
+
+Teleop and planners publish `ackermann_msgs/AckermannDriveStamped` on `/e116_ackermann`:
+
+```
+ackermann_msgs/AckermannDriveStamped
+  drive:
+    steering_angle: <radians>
+    speed: <m/s>
+```
+
+`e116_racecar` subscribes and converts to servo/ESC PWM.
+
+### Week 3 — Problems Encountered
+
+X11 forwarding did not show the pygame teleop window. A terminal teleop node (WASD over ROS) was written instead.
+
+---
+
+## Week 4 — Gap Follow & Race Prep
+
+### Overview
+
+Week 4 ran autonomous gap follow: AprilTags on the left wall (IDs 100–199) and right wall (200+) define a corridor; the car steers toward the midpoint.
+
+### Key Concepts
+
+#### 4.1 Gap follow (`gap_follow.py`)
+
+1. Read tag poses from `/tf`
+2. Pick one left tag (ID ≤ 199) and one right tag (ID ≥ 200)
+3. Steer toward the midpoint in the camera frame
+4. Publish `AckermannDriveStamped` on `/e116_ackermann`
+
+Main tunables: `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_keep1`, `t_keep2`.
+
+![Gap Follow Pipeline](e116_gap_follow_pipeline.svg)
+
+#### 4.2 Headless track workflow
+
+1. SSH to Jetson
+2. Launch camera, apriltag, gap_follow, racecar nodes
+3. Unplug AC, connect LiPo + NiMH
+4. Set car on track
+
+Hot swap: keep AC on, replace LiPo, remove AC—Jetson stays up.
+
+#### 4.3 Track layout
+
+```
+100-series (left)          200-series (right)
+|                                |
+|              ↑ path            |
+|                                |
+```
+
+#### 4.4 Tuning loop
+
+```bash
+vi ~/team_ws/src/e116/e116/gap_follow.py
+cd ~/team_ws
+colcon build --packages-select e116
+source install/setup.bash
+ros2 launch apriltag_ros rs2camera_tag.launch.yml &
+ros2 launch e116 e116race.launch.py
+```
+
+Foxglove (optional):
+
+```bash
+sudo apt install ros-humble-foxglove-bridge
+ros2 launch foxglove_bridge foxglove_bridge_launch.xml
+```
+
+### Demo Video
+
+[Video of FTG](FTG(1).mp4)
+
+### Week 4 — Problems Encountered
+
+With one tag visible, the stock controller used a fixed `turningAngle` and the car jerked sideways. That was replaced with steering toward an offset goal (`SINGLE_TAG_OFFSET`) when only one wall tag is seen.
+
+Parameter tuning over SSH was awkward. Foxglove helped view the camera and tag frames, but tags sometimes stayed on screen after they left the field of view, which made it harder to match tuning to what the camera still saw.
+
+Battery life was still short (same as Week 2). Both packs were charged before track time; LiPo was swapped on AC power to avoid rebooting the Jetson.
+
+---
+
+## References
+
+1. [ROS 2 Humble](https://docs.ros.org/en/humble/)
+2. [Intel RealSense D435](https://store.realsenseai.com)
+3. [AprilTag library](https://github.com/AprilRobotics/apriltag)
+4. [apriltag_ros](https://github.com/christianrauch/apriltag_ros)
+5. [Traxxas 1/16 E-Revo VXL](https://traxxas.com/71076-8-116-e-revo-vxl-wbattery)
+6. [Jetson Orin Nano](https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/)
+7. [Ubuntu command line](https://ubuntu.com/tutorials/command-line-for-beginners)
+8. [F1TENTH gap follow lab](https://f1tenth-coursekit.readthedocs.io/en/stable/assignments/labs/lab4.html)
+
+---
+
+### Acknowledgements
+
+Thanks to Professor Rosa Zheng (Lehigh ECE) for the E116 platform, carrier board, and lab materials this journal is based on.
+
+---
+
+*Compiled from ECE lab weeks 1–4. Hardware and parameters match the Lehigh E116 car.*
+
+---
+
+### Evaluation for RoboRacer-mini
+
+Notes below come from running the E116 stack and thinking about what to keep or change.
+
+- ROS 2: The split between `gap_follow` (planner) and `e116_racecar` (PWM driver) on `/e116_ackermann` is a good teaching pattern. The overhead is real—`colcon build`, sourcing `setup.bash`, launch files, `tf`, multiple terminals, SSH-only operation. Early RoboRacer-mini labs should probably ship a pre-built workspace; full from-source builds can come later.
+
+- Traxxas 1/16 E-Revo VXL: About $300 RTR with ESC, motor, radio, and NiMH. Traxxas quotes ~1.09 kg for the roller alone. With Jetson, carrier, RealSense, extra LiPo, and brackets, the suspension arms and plastic parts flex noticeably. Workable for a first autonomous lap, not ideal if the goal is consistent lap-to-lap steering. A stiffer 1/10 pan car or F1TENTH-style frame would be easier to tune.
+
+- Jetson Orin Nano: Dev kit around $249. Weeks 1–4 did not need the GPU; AprilTag gap follow ran on CPU via `apriltag_ros`. Students still manage JetPack Linux, two power sources, WiFi + SSH, GPIO/PWM on the custom carrier, and slow rebuilds on the board. Jetson makes sense for later vision/ML modules; smaller classes might share a few boards or use lighter compute for the first half of the course.
+
+- BOM: Roughly $1,200–1,600 per car if you price Jetson (~$249), Traxxas (~$300), D435i (~$350–450), LiPo/charger, E116-style carrier, and track/tags/spares. That is several times a basic Donkeycar bill of materials. Cost goes down with shared Jetsons, one standard chassis design, and printed tags instead of a fully built-out wall.
+
+- E116 gap follow: This is AprilTag corridor following (midpoint between 100-series and 200-series tags), not the [F1TENTH follow-the-gap lab](https://f1tenth-coursekit.readthedocs.io/en/stable/assignments/labs/lab4.html) on lidar or a depth scan. It is a reasonable first closed-loop autonomy assignment on a marked course. The RealSense depth stream is barely used. Single-tag cases needed code changes; autonomous speeds in practice were much lower than the template defaults (on the order of 0.1–0.15 m/s vs 0.75–1.2 m/s). Worth keeping as an early module; follow with real depth-based gap follow so the name matches what students read elsewhere.
+
+- RealSense D435i modules worth adding: (1) RGB streams and ROS image topics; (2) depth threshold / emergency stop; (3) project depth to a 2D scan and run classic follow-the-gap; (4) intrinsics + ground plane for cone distance; (5) AprilTag corridor (E116 weeks 3–4); (6) onboard IMU and simple fusion; (7) rosbag logging and a small deploy lab (record on car, train offboard, run policy).
