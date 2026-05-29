@@ -13,9 +13,7 @@
 
 ## Week 1 — Hardware Familiarization & Linux Basics
 
-### Overview
-
-Week 1 covered the E116 car hardware, batteries, motor/ESC, and basic Ubuntu on the Jetson Orin Nano.
+Covered the E116 car hardware, batteries, motor/ESC, and basic Ubuntu on the Jetson Orin Nano.
 
 ### Key Concepts
 
@@ -28,9 +26,7 @@ Week 1 covered the E116 car hardware, batteries, motor/ESC, and basic Ubuntu on 
 
 LiPo max discharge current: $I_{max} = C \times \text{Capacity (Ah)}$ (e.g. 50C × 1.4 Ah ≈ 70 A).
 
-Do not run LiPo below ~3.5 V/cell; the onboard checker beeps near cutoff.
-
-For desk work the LiPo can be swapped for a barrel jack so the Jetson stays on AC.
+The onboard checker beeps is LiPo hits near 3.5 V. For desk work the LiPo can be swapped for a barrel jack so the battery doesn't drain and the Jetson keeps getting power.
 
 [![Charging Traxxas NiMH]()](NiMH.mp4)
 
@@ -38,9 +34,7 @@ For desk work the LiPo can be swapped for a barrel jack so the Jetson stays on A
 
 #### 1.2 Motor & ESC
 
-The car uses a Velineon 380 brushless motor and a Traxxas VXL-3m ESC (electronic commutation, no brushes).
-
-The E116 uses a Velineon® 380 brushless motor paired with an Electronic Speed Controller (ESC). The ESC drives the motor by switching the phase currents electronically.
+The E116 uses a Velineon® 380 brushless motor paired with an Electronic Speed Controller (ESC). The ESC drives the motor by switching the phase currents electronically using PWM.
 
 ---
 
@@ -52,13 +46,13 @@ The E116 uses a Velineon® 380 brushless motor paired with an Electronic Speed C
 | Best for   | Serial, branchy logic  | Parallel numerical workloads  |
 | On Jetson  | ARM Cortex-A78AE       | Ampere GPU (1024 CUDA cores)  |
 
-The **NVIDIA Jetson Orin Nano** is a compact **System-on-Module (SoM)** designed for edge AI inference combining CPU, GPU, and memory in a low-power package suitable for an autonomous vehicle.
+The **NVIDIA Jetson Orin Nano** is designed for edge AI inference combining CPU, GPU, and memory in a low-power package suitable for an autonomous vehicle.
 
 ---
 
 #### 1.4 Ubuntu Linux Basics
 
-Key commands practiced in the terminal:
+Key commands learned in the terminal:
 
 ```bash
 ls -al               # list files with permissions
@@ -82,9 +76,7 @@ LiPo charge settings (voltage/current) were unclear at first. The Traxxas pack h
 
 ## Week 2 — Teleop, PWM Tuning & ROS 2 Introduction
 
-### Overview
-
-Week 2 added keyboard teleop, per-car PWM tuning for servo and ESC, and an intro to ROS 2 Humble (Turtlesim, pub/sub).
+Implementing keyboard teleop, PWM tuning for servo and ESC, and an intro to ROS 2 Humble.
 
 ### Key Concepts
 
@@ -139,7 +131,7 @@ ros2 run rqt_graph rqt_graph
 
 ### Week 2 — Problems Encountered
 
-The drive battery died quickly during PWM tuning. Full charge (12.6 V on the 3S LiPo) was needed; at 12.3 V runtime was already too short to finish a session.
+The drive battery died quickly during PWM tuning. Full charge (12.6 V on the 3S LiPo) was needed. At 12.3 V runtime was already too short to finish a session.
 
 ---
 
@@ -147,7 +139,7 @@ The drive battery died quickly during PWM tuning. Full charge (12.6 V on the 3S 
 
 ### Overview
 
-Week 3 brought up the Intel RealSense D435 on ROS 2, built a workspace with `apriltag_ros`, and moved teleop into launch files.
+Set up the Intel RealSense D435i on ROS 2, built a workspace with `apriltag_ros`, and moved teleop into launch files.
 
 ### Key Concepts
 
@@ -174,11 +166,9 @@ colcon build
 source install/setup.bash
 ```
 
-Re-source `install/setup.bash` after every build.
-
 #### 3.2 AprilTags
 
-Tag family: tag36h11. Each tag has an ID; `apriltag_ros` publishes pose in the camera frame.
+Tag family used was tag36h11. Each tag has an ID; `apriltag_ros` publishes pose in the camera frame.
 
 ![Example AprilTag (tag36h11 family, ID=1)](Apriltag.png)
 
@@ -203,7 +193,7 @@ ackermann_msgs/AckermannDriveStamped
 
 ### Week 3 — Problems Encountered
 
-X11 forwarding did not show the pygame teleop window. A terminal teleop node (WASD over ROS) was written instead.
+X11 forwarding did not show the pygame teleop window. A terminal teleop node (WASD over ROS) was written instead to make teleop work.
 
 ---
 
@@ -211,7 +201,7 @@ X11 forwarding did not show the pygame teleop window. A terminal teleop node (WA
 
 ### Overview
 
-Week 4 ran autonomous gap follow: AprilTags on the left wall (IDs 100–199) and right wall (200+) define a corridor; the car steers toward the midpoint.
+Ran autonomous gap follow with AprilTags on the left wall (IDs 100–199) and right wall (200+) definining a corridor and the car steering toward the midpoint.
 
 ### Key Concepts
 
@@ -222,7 +212,7 @@ Week 4 ran autonomous gap follow: AprilTags on the left wall (IDs 100–199) and
 3. Steer toward the midpoint in the camera frame
 4. Publish `AckermannDriveStamped` on `/e116_ackermann`
 
-Main tunables: `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_keep1`, `t_keep2`.
+Main tunables were `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_keep1`, `t_keep2`.
 
 ![Gap Follow Pipeline](e116_gap_follow_pipeline.svg)
 
@@ -230,10 +220,8 @@ Main tunables: `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_keep1`
 
 1. SSH to Jetson
 2. Launch camera, apriltag, gap_follow, racecar nodes
-3. Unplug AC, connect LiPo + NiMH
+3. Unplug from wall socket and connect LiPo + NiMH
 4. Set car on track
-
-Hot swap: keep AC on, replace LiPo, remove AC—Jetson stays up.
 
 #### 4.3 Track layout
 
@@ -242,24 +230,6 @@ Hot swap: keep AC on, replace LiPo, remove AC—Jetson stays up.
 |                                |
 |              ↑ path            |
 |                                |
-```
-
-#### 4.4 Tuning loop
-
-```bash
-vi ~/team_ws/src/e116/e116/gap_follow.py
-cd ~/team_ws
-colcon build --packages-select e116
-source install/setup.bash
-ros2 launch apriltag_ros rs2camera_tag.launch.yml &
-ros2 launch e116 e116race.launch.py
-```
-
-Foxglove (optional):
-
-```bash
-sudo apt install ros-humble-foxglove-bridge
-ros2 launch foxglove_bridge foxglove_bridge_launch.xml
 ```
 
 ### Demo Video
