@@ -115,8 +115,12 @@ Tuned values were saved in `e116.yaml`:
 | `motor_backward_start` | 27.50 – 29.00 % |
 | `servo_center`         | ~29.70 %        |
 
-![PWM for Servo](pictures/servo-pwm.jpeg)
-![PWM for Motor](pictures/motor-pwm.jpeg)
+<table>
+  <tr>
+    <td><img src="pictures/servo-pwm.jpeg" alt="PWM for Servo" width="320"></td>
+    <td><img src="pictures/motor-pwm.jpeg" alt="PWM for Motor" width="320"></td>
+  </tr>
+</table>
 
 #### 2.2 SSH
 
@@ -192,7 +196,7 @@ source install/setup.bash
 
 Tag family used was tag36h11. Each tag has an ID; `apriltag_ros` publishes pose in the camera frame.
 
-![Example AprilTag (tag36h11 family, ID=1)](pictures/Apriltag.png)
+<img src="pictures/Apriltag.png" alt="Example AprilTag (tag36h11 family, ID=1)" width="200">
 
 #### 3.3 RViz
 
@@ -238,7 +242,7 @@ Ran autonomous gap follow with AprilTags on the left wall (IDs 100–199) and ri
 
 Main tunables were `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_keep1`, `t_keep2`.
 
-![Gap Follow Pipeline](pictures/e116_gap_follow_pipeline.svg)
+<img src="pictures/e116_gap_follow_pipeline.svg" alt="Gap Follow Pipeline" width="480">
 
 #### 4.2 Headless track workflow
 
