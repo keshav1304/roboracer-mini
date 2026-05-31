@@ -6,13 +6,15 @@ This document evaluates the Lehigh E116 platform, in the effort of developing Ro
 
 Most of the four weeks focus on getting the hardware working: batteries, SSH, PWM tuning, ROS workspaces, and camera and AprilTag setup. There is little time on software theory or racing. Autonomous driving appears mainly in Week 4 with gap follow. Most code is already provided. Students launch it on the car, tune a few parameters, and watch how it drives.
 
-Hardware overview video:
+**Key videos**
 
 [![Hardware overview](https://img.youtube.com/vi/1DGavq1OEdM/hqdefault.jpg)](https://youtu.be/1DGavq1OEdM)
 
-Follow the gap video:
+*E116 hardware walkthrough*
 
 [![Follow the gap](https://img.youtube.com/vi/t0ZZ9GUBdJ0/hqdefault.jpg)](https://youtu.be/t0ZZ9GUBdJ0)
+
+*Follow the Gap algorithm*
 
 ## Table of Contents
 
@@ -41,13 +43,13 @@ LiPo max discharge current: $I_{max} = C \times \text{Capacity (Ah)}$ (e.g. 50C 
 
 The onboard checker beeps is LiPo hits near 3.5 V. For desk work the LiPo can be swapped for a barrel jack so the battery doesn't drain and the Jetson keeps getting power.
 
-Charging Traxxas NiMH:
-
 [![Charging Traxxas NiMH](https://img.youtube.com/vi/BVJqiAOtouw/hqdefault.jpg)](https://www.youtube.com/shorts/BVJqiAOtouw)
 
-Charging Ovonic LiPo:
+*Charging the Traxxas NiMH drive battery*
 
 [![Charging Ovonic LiPo](https://img.youtube.com/vi/CKEU-UIINII/hqdefault.jpg)](https://www.youtube.com/shorts/CKEU-UIINII)
+
+*Charging the Ovonic 3S LiPo used to power the Jetson*
 
 #### 1.2 Motor & ESC
 
@@ -83,9 +85,11 @@ grep pattern file    # search text
 python3 script.py    # run Python script
 ```
 
-### Demo Video
+### Video
 
 [![Hardware overview](https://img.youtube.com/vi/1DGavq1OEdM/hqdefault.jpg)](https://youtu.be/1DGavq1OEdM)
+
+*E116 hardware walkthrough: Jetson, carrier board, RealSense, batteries, and Traxxas chassis*
 
 ### Week 1 — Problems Encountered
 
@@ -137,9 +141,11 @@ ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist \
 ros2 run rqt_graph rqt_graph
 ```
 
-### Demo Video
+### Video
 
 [![Teleop video](https://img.youtube.com/vi/pdj6RnFm17U/hqdefault.jpg)](https://www.youtube.com/watch?v=pdj6RnFm17U)
+
+*Keyboard teleop driving the car over ROS 2*
 
 ### Week 2 — Problems Encountered
 
@@ -192,9 +198,9 @@ Tag family used was tag36h11. Each tag has an ID; `apriltag_ros` publishes pose 
 
 Tag detections show up as TF frames in RViz.
 
-April Tag tracking in RViz:
-
 [![April Tag tracking in RViz](https://img.youtube.com/vi/-wQYCcO4qdc/hqdefault.jpg)](https://youtu.be/-wQYCcO4qdc)
+
+*AprilTag detections shown as TF frames in RViz while tags move in front of the camera*
 
 #### 3.4 Ackermann topic
 
@@ -250,9 +256,11 @@ Main tunables were `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_ke
 |                                |
 ```
 
-### Demo Video
+### Video
 
-[![Follow the gap video](https://img.youtube.com/vi/t0ZZ9GUBdJ0/hqdefault.jpg)](https://youtu.be/t0ZZ9GUBdJ0)
+[![Follow the gap](https://img.youtube.com/vi/t0ZZ9GUBdJ0/hqdefault.jpg)](https://youtu.be/t0ZZ9GUBdJ0)
+
+*Autonomous navigation using Follow the Gap algorithm*
 
 ### Week 4 — Problems Encountered
 
