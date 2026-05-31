@@ -8,8 +8,13 @@ Most of the four weeks focus on getting the hardware working: batteries, SSH, PW
 
 **Key videos**
 
-- [Hardware overview](https://youtu.be/1DGavq1OEdM): E116 platform walkthrough
-- [Gap follow run](https://youtu.be/t0ZZ9GUBdJ0): follow the gap in action
+Hardware overview:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/1DGavq1OEdM" title="Hardware overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Gap follow run:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/t0ZZ9GUBdJ0" title="Gap follow run" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Table of Contents
 
@@ -38,9 +43,13 @@ LiPo max discharge current: $I_{max} = C \times \text{Capacity (Ah)}$ (e.g. 50C 
 
 The onboard checker beeps is LiPo hits near 3.5 V. For desk work the LiPo can be swapped for a barrel jack so the battery doesn't drain and the Jetson keeps getting power.
 
-[Charging Traxxas NiMH](https://www.youtube.com/shorts/BVJqiAOtouw)
+Charging Traxxas NiMH:
 
-[Charging Ovonic LiPo](https://www.youtube.com/shorts/CKEU-UIINII)
+<iframe width="315" height="560" src="https://www.youtube.com/embed/BVJqiAOtouw" title="Charging Traxxas NiMH" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Charging Ovonic LiPo:
+
+<iframe width="315" height="560" src="https://www.youtube.com/embed/CKEU-UIINII" title="Charging Ovonic LiPo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 #### 1.2 Motor & ESC
 
@@ -78,7 +87,7 @@ python3 script.py    # run Python script
 
 ### Demo Video
 
-[Hardware overview](https://youtu.be/1DGavq1OEdM)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/1DGavq1OEdM" title="Hardware overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ### Week 1 — Problems Encountered
 
@@ -132,7 +141,7 @@ ros2 run rqt_graph rqt_graph
 
 ### Demo Video
 
-[Teleop video](https://www.youtube.com/watch?v=pdj6RnFm17U)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pdj6RnFm17U" title="Teleop video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ### Week 2 — Problems Encountered
 
@@ -185,7 +194,9 @@ Tag family used was tag36h11. Each tag has an ID; `apriltag_ros` publishes pose 
 
 Tag detections show up as TF frames in RViz.
 
-![Video of April Tag tracking in RViz](https://youtu.be/-wQYCcO4qdc))
+April Tag tracking in RViz:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-wQYCcO4qdc" title="April Tag tracking in RViz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 #### 3.4 Ackermann topic
 
@@ -243,7 +254,7 @@ Main tunables were `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_ke
 
 ### Demo Video
 
-[Gap follow run](https://youtu.be/t0ZZ9GUBdJ0)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/t0ZZ9GUBdJ0" title="Gap follow run" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ### Week 4 — Problems Encountered
 
