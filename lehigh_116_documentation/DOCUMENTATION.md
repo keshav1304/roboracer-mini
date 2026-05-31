@@ -291,7 +291,7 @@ Battery life was still short (same as Week 2). Both packs were charged before tr
 
 ### Acknowledgements
 
-Thanks to Professor Rosa Zheng for the E116 platform, carrier board, and lab materials this journal is based on.
+Thank you to Professor Rosa Zheng for the E116 platform, carrier board, and lab materials this journal is based on.
 
 ---
 
@@ -309,6 +309,6 @@ Notes below come from running the E116 stack and thinking about what to keep or 
 
 - Jetson Orin Nano: Weeks 1–4 did not need the GPU; AprilTag gap follow ran on CPU via `apriltag_ros`. Students still manage JetPack Linux, two power sources, WiFi + SSH, GPIO/PWM on the custom carrier, and slow rebuilds on the board. Jetson makes sense for later vision/ML modules; smaller classes might share a few boards or use lighter compute for the first half of the course.
 
-- BOM: Roughly $1,200–1,600 per car if you price Jetson (~$249), Traxxas (~$300), D435i (~$350–450), LiPo/charger, E116 power board, and track/tags/spares.
+- BOM: Roughly $1,200-1,600 per car if you price Jetson ($249), Traxxas ($300), D435i ($350-450), LiPo/charger, E116 power board, and track/tags/spares.
 
 - E116 gap follow: This is AprilTag corridor following (midpoint between 100-series and 200-series tags), not the [F1TENTH follow-the-gap lab](https://f1tenth-coursekit.readthedocs.io/en/stable/assignments/labs/lab4.html) on lidar or a depth scan. It is a reasonable first closed-loop autonomy assignment on a marked course. The RealSense depth stream is barely used. Single-tag cases needed code changes. Autonomous speeds in practice were much lower than the template defaults (on the order of 0.1–0.15 m/s vs 0.75–1.2 m/s). Worth keeping as an early module, but should follow with real depth-based gap follow so the name matches what students read elsewhere.
