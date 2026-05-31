@@ -6,15 +6,13 @@ This document evaluates the Lehigh E116 platform, in the effort of developing Ro
 
 Most of the four weeks focus on getting the hardware working: batteries, SSH, PWM tuning, ROS workspaces, and camera and AprilTag setup. There is little time on software theory or racing. Autonomous driving appears mainly in Week 4 with gap follow. Most code is already provided. Students launch it on the car, tune a few parameters, and watch how it drives.
 
-**Key videos**
+Hardware overview video:
 
-Hardware overview:
+[![Hardware overview](https://img.youtube.com/vi/1DGavq1OEdM/hqdefault.jpg)](https://youtu.be/1DGavq1OEdM)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/1DGavq1OEdM" title="Hardware overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+Follow the gap video:
 
-Gap follow run:
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/t0ZZ9GUBdJ0" title="Gap follow run" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Follow the gap](https://img.youtube.com/vi/t0ZZ9GUBdJ0/hqdefault.jpg)](https://youtu.be/t0ZZ9GUBdJ0)
 
 ## Table of Contents
 
@@ -45,11 +43,11 @@ The onboard checker beeps is LiPo hits near 3.5 V. For desk work the LiPo can be
 
 Charging Traxxas NiMH:
 
-<iframe width="315" height="560" src="https://www.youtube.com/embed/BVJqiAOtouw" title="Charging Traxxas NiMH" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Charging Traxxas NiMH](https://img.youtube.com/vi/BVJqiAOtouw/hqdefault.jpg)](https://www.youtube.com/shorts/BVJqiAOtouw)
 
 Charging Ovonic LiPo:
 
-<iframe width="315" height="560" src="https://www.youtube.com/embed/CKEU-UIINII" title="Charging Ovonic LiPo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Charging Ovonic LiPo](https://img.youtube.com/vi/CKEU-UIINII/hqdefault.jpg)](https://www.youtube.com/shorts/CKEU-UIINII)
 
 #### 1.2 Motor & ESC
 
@@ -87,7 +85,7 @@ python3 script.py    # run Python script
 
 ### Demo Video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/1DGavq1OEdM" title="Hardware overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Hardware overview](https://img.youtube.com/vi/1DGavq1OEdM/hqdefault.jpg)](https://youtu.be/1DGavq1OEdM)
 
 ### Week 1 — Problems Encountered
 
@@ -141,7 +139,7 @@ ros2 run rqt_graph rqt_graph
 
 ### Demo Video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/pdj6RnFm17U" title="Teleop video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Teleop video](https://img.youtube.com/vi/pdj6RnFm17U/hqdefault.jpg)](https://www.youtube.com/watch?v=pdj6RnFm17U)
 
 ### Week 2 — Problems Encountered
 
@@ -196,7 +194,7 @@ Tag detections show up as TF frames in RViz.
 
 April Tag tracking in RViz:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/-wQYCcO4qdc" title="April Tag tracking in RViz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![April Tag tracking in RViz](https://img.youtube.com/vi/-wQYCcO4qdc/hqdefault.jpg)](https://youtu.be/-wQYCcO4qdc)
 
 #### 3.4 Ackermann topic
 
@@ -254,7 +252,7 @@ Main tunables were `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_ke
 
 ### Demo Video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/t0ZZ9GUBdJ0" title="Gap follow run" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Follow the gap video](https://img.youtube.com/vi/t0ZZ9GUBdJ0/hqdefault.jpg)](https://youtu.be/t0ZZ9GUBdJ0)
 
 ### Week 4 — Problems Encountered
 
