@@ -1,5 +1,9 @@
 # Documenting our journey with E116 by Lehigh University
 
+TL;DR
+
+
+
 
 ## Table of Contents
 
@@ -28,17 +32,17 @@ LiPo max discharge current: $I_{max} = C \times \text{Capacity (Ah)}$ (e.g. 50C 
 
 The onboard checker beeps is LiPo hits near 3.5 V. For desk work the LiPo can be swapped for a barrel jack so the battery doesn't drain and the Jetson keeps getting power.
 
-[![Charging Traxxas NiMH]()](NiMH.mp4)
+[![Charging Traxxas NiMH]()]([NiMH.mp4](https://www.youtube.com/shorts/BVJqiAOtouw?feature=share))
 
-[![Charging Ovonic LiPo]()](LiPo.mp4)
+[![Charging Ovonic LiPo]()]([LiPo.mp4](https://www.youtube.com/shorts/CKEU-UIINII?feature=share))
 
 #### 1.2 Motor & ESC
 
-The E116 uses a Velineon® 380 brushless motor paired with an Electronic Speed Controller (ESC). The ESC drives the motor by switching the phase currents electronically using PWM.
+The E116 uses a Velineon 380 brushless motor paired with an Electronic Speed Controller (ESC). The ESC drives the motor by switching the phase currents electronically using PWM.
 
 ---
 
-#### 1.3 GPU vs. CPU — NVIDIA Jetson Orin Nano
+#### 1.3 GPU vs. CPU and the NVIDIA Jetson Orin Nano
 
 |            | CPU                    | GPU                           |
 | ---------- | ---------------------- | ----------------------------- |
@@ -68,7 +72,7 @@ python3 script.py    # run Python script
 
 ### Demo Video
 
-[![Video walkthrough of hardware]()](Hardware_Overview.mp4)
+[![Video walkthrough of hardware]()]([Hardware_Overview.mp4](https://youtu.be/1DGavq1OEdM))
 
 ### Week 1 — Problems Encountered
 
@@ -84,6 +88,8 @@ Implementing keyboard teleop, PWM tuning for servo and ESC, and an intro to ROS 
 
 E116 PWM runs at 200 Hz. Duty cycle is set as a percentage; each step is about 0.39% ($100\%/256$).
 
+Motors were tuned using custom scripts for testing various PWM values for servo and throttle. 
+
 Tuned values were saved in `e116.yaml`:
 
 | Parameter              | Typical range   |
@@ -97,21 +103,17 @@ Tuned values were saved in `e116.yaml`:
 
 #### 2.2 SSH
 
+SSH enables remote control of the Jetson without needing it to be plugged into a display and keyboard. 
+
 ```bash
 ssh -X username@ipaddress
 ```
 
 `-X` forwards X11 so GUI apps can open on the laptop. Commands run on the Jetson.
 
-[![Video of SSH]()](Week1_SSH.mp4)
-
 #### 2.3 ROS 2 basics
 
-Distribution: Humble.
-
-```
-[Publisher] --> /topic --> [Subscriber]
-```
+ROS provides a convenient way of exploring tbe core concepts using turtlesim. 
 
 ```bash
 ros2 node list
@@ -122,16 +124,15 @@ ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist \
 ros2 run rqt_graph rqt_graph
 ```
 
-[![Video of turtlesim]()](turtlesim.mov)
-
 ### Demo Video
 
-[Telop Video](Teleop.mp4)
-[PWM Tuning](PWM_Tuning.mp4)
+[Telop Video]([Teleop.mp4](https://www.youtube.com/watch?v=pdj6RnFm17U))
 
 ### Week 2 — Problems Encountered
 
-The drive battery died quickly during PWM tuning. Full charge (12.6 V on the 3S LiPo) was needed. At 12.3 V runtime was already too short to finish a session.
+The drive battery died quickly during PWM tuning. Full charge (12.6 V on the 3S LiPo) was needed. At 12.3 V runtime was already too short to finish a session. The provided PWM scripts did not work as intended, so we wrote custom scripts. 
+
+Moreover, X11 forwarding did not show the pygame teleop window. A terminal teleop node (WASD over ROS) was written instead to make teleop work. 
 
 ---
 
@@ -160,6 +161,8 @@ team_ws/
 └── log/
 ```
 
+To build the ROS workspace and run custom nodes or launch files:
+
 ```bash
 cd ~/team_ws
 colcon build
@@ -174,7 +177,7 @@ Tag family used was tag36h11. Each tag has an ID; `apriltag_ros` publishes pose 
 
 #### 3.3 RViz
 
-Tag detections show up as TF frames in RViz (X forward, Y left, Z up).
+Tag detections show up as TF frames in RViz.
 
 ![Video of April Tag tracking in RViz](April Tag Detection.MOV)
 
@@ -193,7 +196,7 @@ ackermann_msgs/AckermannDriveStamped
 
 ### Week 3 — Problems Encountered
 
-X11 forwarding did not show the pygame teleop window. A terminal teleop node (WASD over ROS) was written instead to make teleop work.
+No problems from Week 3 content.
 
 ---
 
@@ -234,7 +237,7 @@ Main tunables were `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_ke
 
 ### Demo Video
 
-[Video of FTG](FTG(1).mp4)
+[Video of FTG]([FTG(1).mp4](https://youtu.be/t0ZZ9GUBdJ0))
 
 ### Week 4 — Problems Encountered
 
@@ -261,7 +264,7 @@ Battery life was still short (same as Week 2). Both packs were charged before tr
 
 ### Acknowledgements
 
-Thanks to Professor Rosa Zheng (Lehigh ECE) for the E116 platform, carrier board, and lab materials this journal is based on.
+Thanks to Professor Rosa Zheng for the E116 platform, carrier board, and lab materials this journal is based on.
 
 ---
 
@@ -275,12 +278,10 @@ Notes below come from running the E116 stack and thinking about what to keep or 
 
 - ROS 2: The split between `gap_follow` (planner) and `e116_racecar` (PWM driver) on `/e116_ackermann` is a good teaching pattern. The overhead is real—`colcon build`, sourcing `setup.bash`, launch files, `tf`, multiple terminals, SSH-only operation. Early RoboRacer-mini labs should probably ship a pre-built workspace; full from-source builds can come later.
 
-- Traxxas 1/16 E-Revo VXL: About $300 RTR with ESC, motor, radio, and NiMH. Traxxas quotes ~1.09 kg for the roller alone. With Jetson, carrier, RealSense, extra LiPo, and brackets, the suspension arms and plastic parts flex noticeably. Workable for a first autonomous lap, not ideal if the goal is consistent lap-to-lap steering. A stiffer 1/10 pan car or F1TENTH-style frame would be easier to tune.
+- Traxxas 1/16 E-Revo VXL: About $300 RTR with ESC, motor, radio, and NiMH. Traxxas quotes ~1.09 kg for the roller alone. With Jetson, carrier, RealSense, extra LiPo, and brackets, the suspension arms and plastic parts flex noticeably, and that could lead to very quick structural damage. 
 
 - Jetson Orin Nano: Dev kit around $249. Weeks 1–4 did not need the GPU; AprilTag gap follow ran on CPU via `apriltag_ros`. Students still manage JetPack Linux, two power sources, WiFi + SSH, GPIO/PWM on the custom carrier, and slow rebuilds on the board. Jetson makes sense for later vision/ML modules; smaller classes might share a few boards or use lighter compute for the first half of the course.
 
-- BOM: Roughly $1,200–1,600 per car if you price Jetson (~$249), Traxxas (~$300), D435i (~$350–450), LiPo/charger, E116-style carrier, and track/tags/spares. That is several times a basic Donkeycar bill of materials. Cost goes down with shared Jetsons, one standard chassis design, and printed tags instead of a fully built-out wall.
+- BOM: Roughly $1,200–1,600 per car if you price Jetson (~$249), Traxxas (~$300), D435i (~$350–450), LiPo/charger, E116 power board, and track/tags/spares.
 
-- E116 gap follow: This is AprilTag corridor following (midpoint between 100-series and 200-series tags), not the [F1TENTH follow-the-gap lab](https://f1tenth-coursekit.readthedocs.io/en/stable/assignments/labs/lab4.html) on lidar or a depth scan. It is a reasonable first closed-loop autonomy assignment on a marked course. The RealSense depth stream is barely used. Single-tag cases needed code changes; autonomous speeds in practice were much lower than the template defaults (on the order of 0.1–0.15 m/s vs 0.75–1.2 m/s). Worth keeping as an early module; follow with real depth-based gap follow so the name matches what students read elsewhere.
-
-- RealSense D435i modules worth adding: (1) RGB streams and ROS image topics; (2) depth threshold / emergency stop; (3) project depth to a 2D scan and run classic follow-the-gap; (4) intrinsics + ground plane for cone distance; (5) AprilTag corridor (E116 weeks 3–4); (6) onboard IMU and simple fusion; (7) rosbag logging and a small deploy lab (record on car, train offboard, run policy).
+- E116 gap follow: This is AprilTag corridor following (midpoint between 100-series and 200-series tags), not the [F1TENTH follow-the-gap lab](https://f1tenth-coursekit.readthedocs.io/en/stable/assignments/labs/lab4.html) on lidar or a depth scan. It is a reasonable first closed-loop autonomy assignment on a marked course. The RealSense depth stream is barely used. Single-tag cases needed code changes. Autonomous speeds in practice were much lower than the template defaults (on the order of 0.1–0.15 m/s vs 0.75–1.2 m/s). Worth keeping as an early module, but should follow with real depth-based gap follow so the name matches what students read elsewhere.
