@@ -1,16 +1,22 @@
 # Documenting our journey with E116 by Lehigh University
 
-TL;DR
+## TL;DR
 
+This document evaluates the Lehigh E116 platform, in the effort of developing RoboRacer-mini, a hardware + software platform to use autonomous racing as a tool for high school and undergraduate students to explore physical AI. It walks through the course hardware and software week by week.
 
+Most of the four weeks focus on getting the hardware working: batteries, SSH, PWM tuning, ROS workspaces, and camera and AprilTag setup. There is little time on software theory or racing. Autonomous driving appears mainly in Week 4 with gap follow. Most code is already provided. Students launch it on the car, tune a few parameters, and watch how it drives.
 
+**Key videos**
+
+- [Hardware overview](https://youtu.be/1DGavq1OEdM): E116 platform walkthrough
+- [Gap follow run](https://youtu.be/t0ZZ9GUBdJ0): follow the gap in action
 
 ## Table of Contents
 
 1. [Week 1 — Hardware Familiarization &amp; Linux Basics](#week-1)
 2. [Week 2 — Teleop, PWM Tuning &amp; ROS 2 Introduction](#week-2)
-3. [Week 3 — Stereo Camera &amp; AprilTag Detection](#week-3)
-4. [Week 4 — Gap Follow Algorithm &amp; Race Preparation](#week-4)
+3. [Week 3 — RealSense Camera &amp; AprilTag Detection](#week-3)
+4. [Week 4 — Gap Follow Algorithm](#week-4)
 5. [References](#references)
 
 ---
@@ -32,9 +38,9 @@ LiPo max discharge current: $I_{max} = C \times \text{Capacity (Ah)}$ (e.g. 50C 
 
 The onboard checker beeps is LiPo hits near 3.5 V. For desk work the LiPo can be swapped for a barrel jack so the battery doesn't drain and the Jetson keeps getting power.
 
-[![Charging Traxxas NiMH]()]([NiMH.mp4](https://www.youtube.com/shorts/BVJqiAOtouw?feature=share))
+[Charging Traxxas NiMH](https://www.youtube.com/shorts/BVJqiAOtouw)
 
-[![Charging Ovonic LiPo]()]([LiPo.mp4](https://www.youtube.com/shorts/CKEU-UIINII?feature=share))
+[Charging Ovonic LiPo](https://www.youtube.com/shorts/CKEU-UIINII)
 
 #### 1.2 Motor & ESC
 
@@ -72,7 +78,7 @@ python3 script.py    # run Python script
 
 ### Demo Video
 
-[![Video walkthrough of hardware]()]([Hardware_Overview.mp4](https://youtu.be/1DGavq1OEdM))
+[Hardware overview](https://youtu.be/1DGavq1OEdM)
 
 ### Week 1 — Problems Encountered
 
@@ -98,8 +104,8 @@ Tuned values were saved in `e116.yaml`:
 | `motor_backward_start` | 27.50 – 29.00 % |
 | `servo_center`         | ~29.70 %        |
 
-![PWM for Servo](servo-pwm.png)
-![PWM for Motor](motor-pwm.png)
+![PWM for Servo](pictures/servo-pwm.jpeg)
+![PWM for Motor](pictures/motor-pwm.jpeg)
 
 #### 2.2 SSH
 
@@ -126,7 +132,7 @@ ros2 run rqt_graph rqt_graph
 
 ### Demo Video
 
-[Telop Video]([Teleop.mp4](https://www.youtube.com/watch?v=pdj6RnFm17U))
+[Teleop video](https://www.youtube.com/watch?v=pdj6RnFm17U)
 
 ### Week 2 — Problems Encountered
 
@@ -173,13 +179,13 @@ source install/setup.bash
 
 Tag family used was tag36h11. Each tag has an ID; `apriltag_ros` publishes pose in the camera frame.
 
-![Example AprilTag (tag36h11 family, ID=1)](Apriltag.png)
+![Example AprilTag (tag36h11 family, ID=1)](pictures/Apriltag.png)
 
 #### 3.3 RViz
 
 Tag detections show up as TF frames in RViz.
 
-![Video of April Tag tracking in RViz](April Tag Detection.MOV)
+![Video of April Tag tracking in RViz](pictures/April%20Tag%20Detection.MOV)
 
 #### 3.4 Ackermann topic
 
@@ -217,7 +223,7 @@ Ran autonomous gap follow with AprilTags on the left wall (IDs 100–199) and ri
 
 Main tunables were `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_keep1`, `t_keep2`.
 
-![Gap Follow Pipeline](e116_gap_follow_pipeline.svg)
+![Gap Follow Pipeline](pictures/e116_gap_follow_pipeline.svg)
 
 #### 4.2 Headless track workflow
 
@@ -237,7 +243,7 @@ Main tunables were `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_ke
 
 ### Demo Video
 
-[Video of FTG]([FTG(1).mp4](https://youtu.be/t0ZZ9GUBdJ0))
+[Gap follow run](https://youtu.be/t0ZZ9GUBdJ0)
 
 ### Week 4 — Problems Encountered
 
@@ -276,7 +282,7 @@ Thanks to Professor Rosa Zheng for the E116 platform, carrier board, and lab mat
 
 Notes below come from running the E116 stack and thinking about what to keep or change.
 
-- ROS 2: The split between `gap_follow` (planner) and `e116_racecar` (PWM driver) on `/e116_ackermann` is a good teaching pattern. The overhead is real—`colcon build`, sourcing `setup.bash`, launch files, `tf`, multiple terminals, SSH-only operation. Early RoboRacer-mini labs should probably ship a pre-built workspace; full from-source builds can come later.
+- ROS 2: The split between `gap_follow` (planner) and `e116_racecar` (PWM driver) on `/e116_ackermann` is a good teaching pattern. The overhead is real: `colcon build`, sourcing `setup.bash`, launch files, `tf`, multiple terminals, and SSH-only operation. Early RoboRacer-mini labs should ship a pre-built workspace. Full from-source builds can come later.
 
 - Traxxas 1/16 E-Revo VXL: About $300 RTR with ESC, motor, radio, and NiMH. Traxxas quotes ~1.09 kg for the roller alone. With Jetson, carrier, RealSense, extra LiPo, and brackets, the suspension arms and plastic parts flex noticeably, and that could lead to very quick structural damage. 
 
