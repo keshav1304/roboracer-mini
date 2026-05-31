@@ -303,11 +303,11 @@ Thanks to Professor Rosa Zheng for the E116 platform, carrier board, and lab mat
 
 Notes below come from running the E116 stack and thinking about what to keep or change.
 
-- ROS 2: The split between `gap_follow` (planner) and `e116_racecar` (PWM driver) on `/e116_ackermann` is a good teaching pattern. The overhead is real: `colcon build`, sourcing `setup.bash`, launch files, `tf`, multiple terminals, and SSH-only operation. Early RoboRacer-mini labs should ship a pre-built workspace. Full from-source builds can come later.
+- ROS 2: Despite the benefits of huge community support and usage of ROS 2, the overheads are also real. It is difficult for students to be acquainted with launch files, `tf`, multiple terminals, and SSH-only operation that early on. RoboRacer-mini could use a more GUI-friendly tool for coding and controlling the car, and ROS may be under the hood.
 
-- Traxxas 1/16 E-Revo VXL: About $300 RTR with ESC, motor, radio, and NiMH. Traxxas quotes ~1.09 kg for the roller alone. With Jetson, carrier, RealSense, extra LiPo, and brackets, the suspension arms and plastic parts flex noticeably, and that could lead to very quick structural damage. 
+- Traxxas 1/16 E-Revo VXL: Traxxas quotes ~1.09 kg for the roller alone. With Jetson, carrier, RealSense, extra LiPo, and brackets, the suspension arms and plastic parts flex noticeably, and that affects drive performance and durability. And it could lead to very quick structural damage. 
 
-- Jetson Orin Nano: Dev kit around $249. Weeks 1–4 did not need the GPU; AprilTag gap follow ran on CPU via `apriltag_ros`. Students still manage JetPack Linux, two power sources, WiFi + SSH, GPIO/PWM on the custom carrier, and slow rebuilds on the board. Jetson makes sense for later vision/ML modules; smaller classes might share a few boards or use lighter compute for the first half of the course.
+- Jetson Orin Nano: Weeks 1–4 did not need the GPU; AprilTag gap follow ran on CPU via `apriltag_ros`. Students still manage JetPack Linux, two power sources, WiFi + SSH, GPIO/PWM on the custom carrier, and slow rebuilds on the board. Jetson makes sense for later vision/ML modules; smaller classes might share a few boards or use lighter compute for the first half of the course.
 
 - BOM: Roughly $1,200–1,600 per car if you price Jetson (~$249), Traxxas (~$300), D435i (~$350–450), LiPo/charger, E116 power board, and track/tags/spares.
 
