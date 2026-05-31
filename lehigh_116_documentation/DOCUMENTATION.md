@@ -185,7 +185,7 @@ Tag family used was tag36h11. Each tag has an ID; `apriltag_ros` publishes pose 
 
 Tag detections show up as TF frames in RViz.
 
-![Video of April Tag tracking in RViz](pictures/April%20Tag%20Detection.MOV)
+![Video of April Tag tracking in RViz](https://youtu.be/-wQYCcO4qdc))
 
 #### 3.4 Ackermann topic
 
