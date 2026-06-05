@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-import { ChevronDown, ExternalLink, FileText, ImageIcon, Play } from "lucide-react";
+import { ChevronDown, ArrowRight, FileText, ImageIcon, Play, ExternalLink } from "lucide-react";
 
 export interface InvestigationDetail {
     label: string;
@@ -22,7 +23,7 @@ export interface InvestigationCardProps {
     photoSlots?: number;
     videoSlots?: number;
     videos?: InvestigationVideo[];
-    documentationUrl?: string;
+    documentationHref?: string;
     documentationDescription?: string;
 }
 
@@ -34,7 +35,7 @@ export default function InvestigationCard({
     photoSlots = 0,
     videoSlots = 0,
     videos = [],
-    documentationUrl,
+    documentationHref,
     documentationDescription,
 }: InvestigationCardProps) {
     const [isOpen, setIsOpen] = useState(false);
@@ -56,25 +57,23 @@ export default function InvestigationCard({
                         <span className="text-xs uppercase tracking-widest px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/30">
                             {status}
                         </span>
-                        {documentationUrl && (
+                        {documentationHref && (
                             <span className="text-xs uppercase tracking-widest px-3 py-1 rounded-full bg-brand-magenta/10 text-brand-magenta border border-brand-magenta/30">
                                 Documentation
                             </span>
                         )}
                     </div>
                     <p className="text-gray-400 text-lg">{summary}</p>
-                    {documentationUrl && (
-                        <a
-                            href={documentationUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                    {documentationHref && (
+                        <Link
+                            href={documentationHref}
                             onClick={(e) => e.stopPropagation()}
                             className="inline-flex items-center gap-2 mt-4 text-brand-magenta hover:text-brand-magenta-hover font-medium transition-colors"
                         >
                             <FileText size={16} />
-                            View full documentation
-                            <ExternalLink size={14} />
-                        </a>
+                            Read full documentation
+                            <ArrowRight size={14} />
+                        </Link>
                     )}
                 </div>
                 <ChevronDown
@@ -87,7 +86,7 @@ export default function InvestigationCard({
             >
                 <div className="overflow-hidden">
                     <div className="px-8 pb-8 pt-0 border-t border-white/10">
-                        {documentationUrl && (
+                        {documentationHref && (
                             <div className="mt-6 p-6 rounded-2xl bg-brand-dark border-2 border-brand-magenta/40">
                                 <div className="flex items-start gap-4">
                                     <div className="w-12 h-12 rounded-xl bg-brand-magenta/10 flex items-center justify-center shrink-0">
@@ -101,18 +100,16 @@ export default function InvestigationCard({
                                             </p>
                                         )}
                                         <p className="text-gray-500 text-sm mb-4">
-                                            Full write-up with embedded videos, photos, setup notes, and
+                                            Full write-up with videos, photos, setup notes, and
                                             RoboRacer-mini evaluation.
                                         </p>
-                                        <a
-                                            href={documentationUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                        <Link
+                                            href={documentationHref}
                                             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-magenta hover:bg-brand-magenta-hover text-white font-semibold text-sm transition-colors"
                                         >
-                                            Read on GitHub
-                                            <ExternalLink size={14} />
-                                        </a>
+                                            Open documentation
+                                            <ArrowRight size={14} />
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

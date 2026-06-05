@@ -24,8 +24,7 @@ const carInvestigations = [
       { label: "Wheelbase", value: "~174 mm (kit ~25.5 × 14 × 21.5 cm)" },
       { label: "Notes", value: "Off-the-shelf DonkeyCar stack; useful baseline for teaching and rapid prototyping." },
     ],
-    documentationUrl:
-      "https://github.com/keshav1304/roboracer-mini/blob/main/donkeycar_documentation/DOCUMENTATION.md",
+    documentationHref: "/roboracer-mini/waveshare",
     documentationDescription:
       "Donkeycar on the Waveshare PiRacer Pro: hardware setup, PWM tuning, line following, lane keeping, and evaluation for RoboRacer-mini.",
     videos: [
@@ -54,8 +53,7 @@ const carInvestigations = [
       { label: "Camera", value: "Intel RealSense D435i" },
       { label: "Notes", value: "Established reference design we are studying for RoboRacer-mini hardware and software choices." },
     ],
-    documentationUrl:
-      "https://github.com/keshav1304/roboracer-mini/blob/main/lehigh_116_documentation/DOCUMENTATION.md",
+    documentationHref: "/roboracer-mini/lehigh-e116",
     documentationDescription:
       "Week-by-week E116 journal: Jetson and Traxxas hardware, ROS 2, RealSense, AprilTags, gap follow, and RoboRacer-mini evaluation.",
     videos: [
@@ -276,7 +274,7 @@ export default function RoboRacerMiniPage() {
               <h2 className="text-4xl md:text-5xl font-bold mb-6">Chassis Investigation</h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
                 Three platforms we are building on or learning from. Waveshare and
-                Lehigh have full investigation docs with videos and photos on GitHub.
+                Lehigh have full investigation docs with videos and photos on-site.
                 Expand each card for specs and media.
               </p>
             </div>
