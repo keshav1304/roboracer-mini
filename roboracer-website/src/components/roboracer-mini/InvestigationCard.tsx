@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ExternalLink, ImageIcon, Play } from "lucide-react";
+import { ChevronDown, ExternalLink, FileText, ImageIcon, Play } from "lucide-react";
 
 export interface InvestigationDetail {
     label: string;
@@ -22,6 +22,8 @@ export interface InvestigationCardProps {
     photoSlots?: number;
     videoSlots?: number;
     videos?: InvestigationVideo[];
+    documentationUrl?: string;
+    documentationDescription?: string;
 }
 
 export default function InvestigationCard({
@@ -32,6 +34,8 @@ export default function InvestigationCard({
     photoSlots = 0,
     videoSlots = 0,
     videos = [],
+    documentationUrl,
+    documentationDescription,
 }: InvestigationCardProps) {
     const [isOpen, setIsOpen] = useState(false);
     const hasPhotos = photoSlots > 0;
@@ -52,8 +56,26 @@ export default function InvestigationCard({
                         <span className="text-xs uppercase tracking-widest px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/30">
                             {status}
                         </span>
+                        {documentationUrl && (
+                            <span className="text-xs uppercase tracking-widest px-3 py-1 rounded-full bg-brand-magenta/10 text-brand-magenta border border-brand-magenta/30">
+                                Documentation
+                            </span>
+                        )}
                     </div>
                     <p className="text-gray-400 text-lg">{summary}</p>
+                    {documentationUrl && (
+                        <a
+                            href={documentationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-2 mt-4 text-brand-magenta hover:text-brand-magenta-hover font-medium transition-colors"
+                        >
+                            <FileText size={16} />
+                            View full documentation
+                            <ExternalLink size={14} />
+                        </a>
+                    )}
                 </div>
                 <ChevronDown
                     className={`h-6 w-6 text-brand-blue shrink-0 mt-1 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
@@ -65,6 +87,37 @@ export default function InvestigationCard({
             >
                 <div className="overflow-hidden">
                     <div className="px-8 pb-8 pt-0 border-t border-white/10">
+                        {documentationUrl && (
+                            <div className="mt-6 p-6 rounded-2xl bg-brand-dark border-2 border-brand-magenta/40">
+                                <div className="flex items-start gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-brand-magenta/10 flex items-center justify-center shrink-0">
+                                        <FileText className="h-6 w-6 text-brand-magenta" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="text-lg font-bold mb-2">Investigation Documentation</h4>
+                                        {documentationDescription && (
+                                            <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                                                {documentationDescription}
+                                            </p>
+                                        )}
+                                        <p className="text-gray-500 text-sm mb-4">
+                                            Full write-up with embedded videos, photos, setup notes, and
+                                            RoboRacer-mini evaluation.
+                                        </p>
+                                        <a
+                                            href={documentationUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-magenta hover:bg-brand-magenta-hover text-white font-semibold text-sm transition-colors"
+                                        >
+                                            Read on GitHub
+                                            <ExternalLink size={14} />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
                             {details.map((detail) => (
                                 <div key={detail.label}>
