@@ -36,8 +36,10 @@ export default function DocumentationContent({
         rehypePlugins={[rehypeRaw]}
         components={{
           h1: ({ children }) => (
-            <h1 className="text-3xl md:text-4xl font-bold mb-6 mt-2 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-magenta">
-              {children}
+            <h1 className="text-3xl md:text-4xl font-bold mb-6 mt-2 leading-normal">
+              <span className="inline-block py-0.5 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-magenta">
+                {children}
+              </span>
             </h1>
           ),
           h2: ({ children }) => {

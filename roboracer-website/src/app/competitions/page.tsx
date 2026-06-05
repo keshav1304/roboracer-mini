@@ -16,37 +16,43 @@ const pipelineSteps = [
     step: 1,
     title: "LiDAR Scans",
     icon: ScanLine,
-    description: "Laser range scans capture the track layout in real time.",
+    description:
+      "A ROS driver node streams laser range scans from the simulator, giving the stack a real-time geometric view of walls, corners, and track layout.",
   },
   {
     step: 2,
     title: "Scan Matching",
     icon: Crosshair,
-    description: "Consecutive scans are aligned to estimate how the car is moving.",
+    description:
+      "Consecutive LiDAR scans are aligned to estimate how the car moved between frames. Following RoboRacer Learn, this uses Iterative Closest Point (ICP) scan matching to register each new scan against the previous one and build incremental odometry for mapping.",
   },
   {
     step: 3,
-    title: "SLAM Toolbox",
+    title: "SLAM Map Building",
     icon: Map,
-    description: "Matched scans are fused into a full map of the track.",
+    description:
+      "We build a map of the track using SLAM. The slam_toolbox ROS library fuses laser scans and odometry in a pose graph to produce a 2D occupancy grid of the circuit, as covered in RoboRacer Learn (Lecture 9).",
   },
   {
     step: 4,
     title: "Particle Filter Localization",
     icon: Crosshair,
-    description: "ROS particle filters track the car's pose on that map during the race.",
+    description:
+      "With a map in hand, the car must know where it is on track during the race. The AMCL ROS package (Adaptive Monte Carlo Localization) runs a particle filter: many pose guesses are spread across the map, weighted against live LiDAR, and resampled to track the most likely position (RoboRacer Learn, Lecture 8).",
   },
   {
     step: 5,
     title: "Raceline Optimization",
     icon: Route,
-    description: "The fastest racing line around the track is computed.",
+    description:
+      "A planner node reads the track map and computes a minimum-time racing line around the circuit for the controller to follow.",
   },
   {
     step: 6,
     title: "Pure Pursuit Control",
     icon: SlidersHorizontal,
-    description: "Steering and throttle follow a lookahead point on the raceline.",
+    description:
+      "A pure pursuit controller tracks the raceline by steering toward a lookahead point on the path, commanding steering angle and speed to keep the car on the fastest line (RoboRacer Learn, Lecture 10).",
   },
 ];
 
@@ -122,9 +128,10 @@ export default function CompetitionsPage() {
                 simulator on race day.
               </p>
               <p className="text-lg text-gray-400 leading-relaxed mb-8">
-                Data flows from raw LiDAR through mapping and localization, then
-                into raceline planning and pure pursuit control. The pipeline below
-                is what powers our agent on track.
+                Data flows from raw LiDAR through ICP scan matching and SLAM map
+                building, then AMCL localization, raceline planning, and pure pursuit
+                control. The pipeline below follows the same mapping, localization, and
+                control concepts taught in RoboRacer Learn.
               </p>
 
               <div className="rounded-2xl bg-white/5 border border-white/10 divide-y divide-white/10">
