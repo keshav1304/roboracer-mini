@@ -1,177 +1,240 @@
-import Image from "next/image";
-import { Award, ExternalLink, Github, Medal, Play, Trophy } from "lucide-react";
+import PageHero from "@/components/layout/PageHero";
+import {
+  Box,
+  Crosshair,
+  ExternalLink,
+  Github,
+  Map,
+  Medal,
+  Play,
+  Route,
+  ScanLine,
+  SlidersHorizontal,
+  Trophy,
+} from "lucide-react";
+
+const techStackSteps = [
+  {
+    step: 1,
+    title: "LiDAR Scans",
+    icon: ScanLine,
+    summary: "Laser range scans of the track.",
+    detail: "Walls, landmarks, track geometry.",
+    color: "brand-blue",
+  },
+  {
+    step: 2,
+    title: "Scan Matching",
+    icon: Crosshair,
+    summary: "Align consecutive scans.",
+    detail: "Estimate frame-to-frame motion.",
+    color: "brand-magenta",
+  },
+  {
+    step: 3,
+    title: "SLAM Toolbox",
+    icon: Map,
+    summary: "Build the track map.",
+    detail: "Full SLAM map from matched scans.",
+    color: "brand-blue",
+  },
+  {
+    step: 4,
+    title: "Particle Filter Localization",
+    icon: Crosshair,
+    summary: "Localize on the map.",
+    detail: "ROS particle filters for pose estimation.",
+    color: "brand-magenta",
+  },
+  {
+    step: 5,
+    title: "Raceline Optimization",
+    icon: Route,
+    summary: "Compute the racing line.",
+    detail: "Fast path balancing speed and curvature.",
+    color: "brand-blue",
+  },
+  {
+    step: 6,
+    title: "Pure Pursuit Control",
+    icon: SlidersHorizontal,
+    summary: "Steer and throttle.",
+    detail: "Follow lookahead point on the raceline.",
+    color: "brand-magenta",
+  },
+];
 
 export default function CompetitionsPage() {
   return (
     <div className="flex flex-col">
-      {/* Hero */}
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/hero_background.png"
-            alt="RoboRacer Competitions"
-            fill
-            className="object-cover opacity-40"
-            priority
-          />
-          <div className="absolute inset-0 bg-brand-dark/70" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm uppercase tracking-widest text-brand-blue mb-4">
-            Penn RoboRacer Club
-          </p>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-magenta">
-            Competitions
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            We compete in autonomous racing challenges worldwide — testing our
-            algorithms against the best teams in simulation and on the track.
-          </p>
-        </div>
-      </section>
+      <PageHero title="Competitions" />
 
       <div className="bg-gradient-to-b from-brand-dark to-brand-[#ec4899]">
         {/* ICRA 2026 */}
-        <section className="py-24 border-b border-white/10">
+        <section className="py-16 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap items-center gap-4 mb-8">
-              <span className="text-xs uppercase tracking-widest px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/30">
-                Featured
-              </span>
-              <span className="text-gray-400">ICRA 2026</span>
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              ICRA 2026 Simulation Competition
+            <p className="text-sm uppercase tracking-widest text-gray-400 mb-3">ICRA 2026</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Simulation Competition
             </h2>
-            <p className="text-xl text-gray-300 max-w-4xl leading-relaxed mb-12">
-              Penn RoboRacer Club participated in the ICRA 2026 autonomous
-              racing simulation challenge — a global competition where teams
-              develop and deploy racing agents in a high-fidelity simulator.
-              Competing against universities from around the world, we placed{" "}
-              <span className="text-white font-semibold">9th overall</span>.
+            <p className="text-lg text-gray-400 max-w-2xl mb-10">
+              Autonomous racing agents in a high-fidelity simulator.{" "}
+              <span className="text-white font-medium">9th overall.</span>
             </p>
 
-            {/* Results highlight */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
-              <div className="p-8 rounded-3xl bg-white/5 border border-brand-blue/30 text-center">
-                <Medal className="h-10 w-10 text-brand-blue mx-auto mb-4" />
-                <p className="text-4xl font-bold text-white mb-2">9th</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl">
+              <div className="p-6 rounded-3xl bg-white/5 border border-brand-blue/30 text-center">
+                <Medal className="h-8 w-8 text-brand-blue mx-auto mb-3" />
+                <p className="text-3xl font-bold text-white mb-1">9th</p>
                 <p className="text-sm uppercase tracking-wider text-gray-400">
-                  Overall Placement
+                  Overall
                 </p>
               </div>
-              <div className="p-8 rounded-3xl bg-white/5 border border-brand-magenta/30 text-center">
-                <Trophy className="h-10 w-10 text-brand-magenta mx-auto mb-4" />
-                <p className="text-4xl font-bold text-white mb-2">Global</p>
+              <div className="p-6 rounded-3xl bg-white/5 border border-brand-magenta/30 text-center">
+                <Trophy className="h-8 w-8 text-brand-magenta mx-auto mb-3" />
+                <p className="text-lg font-bold text-white mb-1">Global field</p>
                 <p className="text-sm uppercase tracking-wider text-gray-400">
-                  International Field
-                </p>
-              </div>
-              <div className="p-8 rounded-3xl bg-white/5 border border-white/10 text-center">
-                <Award className="h-10 w-10 text-brand-blue mx-auto mb-4" />
-                <p className="text-4xl font-bold text-white mb-2">Sim</p>
-                <p className="text-sm uppercase tracking-wider text-gray-400">
-                  Racing Challenge
+                  Teams worldwide
                 </p>
               </div>
             </div>
+          </div>
+        </section>
 
-            {/* About the competition */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <div>
-                <h3 className="text-2xl font-bold mb-6">The Challenge</h3>
-                <p className="text-lg text-gray-400 leading-relaxed mb-4">
-                  Teams built autonomous racing stacks spanning perception,
-                  localization, planning, and control — all running in simulation
-                  against complex track layouts and competitive opponents.
-                </p>
-                <p className="text-lg text-gray-400 leading-relaxed">
-                  The competition pushed us to iterate quickly on algorithm
-                  design, tune for race-day performance, and document our
-                  approach for reproducibility.
-                </p>
-              </div>
+        {/* Competition video */}
+        <section className="py-16 border-b border-white/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-8">Competition Run</h2>
 
-              <div>
-                <h3 className="text-2xl font-bold mb-6">Our Approach</h3>
-                <p className="text-lg text-gray-400 leading-relaxed mb-4">
-                  Our stack combined robust perception pipelines with adaptive
-                  planning strategies tuned for high-speed racing scenarios.
-                  Simulation let us test edge cases and race strategies before
-                  committing to hardware.
-                </p>
-                <p className="text-lg text-gray-400 leading-relaxed">
-                  Finishing 9th overall validated months of collaborative
-                  engineering — and gave us a strong foundation to carry into
-                  RoboRacer-mini and future competitions.
-                </p>
+            <div className="max-w-4xl">
+              <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-brand-magenta/30 shadow-2xl shadow-brand-magenta/10">
+                <iframe
+                  src="https://www.youtube.com/embed/pZyWX06vMJg"
+                  title="ICRA 2026 Simulation Competition Run"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                />
               </div>
+              <p className="mt-4">
+                <a
+                  href="https://www.youtube.com/watch?v=pZyWX06vMJg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-brand-magenta hover:text-brand-magenta-hover font-medium transition-colors text-sm"
+                >
+                  Watch on YouTube
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Tech stack */}
+        <section className="py-16 border-b border-white/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">Tech Stack</h2>
+            <p className="text-gray-400 mb-10 max-w-2xl">
+              <span className="text-white font-medium">ROS</span> stack, submitted as a{" "}
+              <span className="text-white font-medium">Docker container</span>.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12 max-w-3xl">
+              <div className="p-6 rounded-2xl bg-brand-dark border border-brand-blue/30 flex items-start gap-4">
+                <Box className="h-5 w-5 text-brand-blue shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-bold mb-1">ROS</h3>
+                  <p className="text-sm text-gray-400">
+                    LiDAR, SLAM, localization, planning, control.
+                  </p>
+                </div>
+              </div>
+              <div className="p-6 rounded-2xl bg-brand-dark border border-brand-magenta/30 flex items-start gap-4">
+                <Box className="h-5 w-5 text-brand-magenta shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-bold mb-1">Docker</h3>
+                  <p className="text-sm text-gray-400">
+                    Full stack packaged for the competition simulator.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {techStackSteps.map((item) => {
+                const Icon = item.icon;
+                const isBlue = item.color === "brand-blue";
+                return (
+                  <div
+                    key={item.step}
+                    className={`p-6 rounded-2xl bg-white/5 border ${isBlue ? "border-brand-blue/40" : "border-brand-magenta/40"}`}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <span
+                        className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold ${isBlue ? "bg-brand-blue/20 text-brand-blue" : "bg-brand-magenta/20 text-brand-magenta"}`}
+                      >
+                        {item.step}
+                      </span>
+                      <Icon
+                        className={`h-4 w-4 ${isBlue ? "text-brand-blue" : "text-brand-magenta"}`}
+                      />
+                      <h3 className="font-bold">{item.title}</h3>
+                    </div>
+                    <p className="text-gray-300 text-sm mb-1">{item.summary}</p>
+                    <p className="text-xs text-gray-500">{item.detail}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-10 max-w-3xl p-6 rounded-2xl bg-brand-dark border border-white/10 text-center">
+              <p className="text-sm text-gray-300">
+                <span className="text-brand-blue font-medium">Sense</span>
+                {" → "}
+                <span className="text-brand-magenta font-medium">Map</span>
+                {" → "}
+                <span className="text-brand-blue font-medium">Localize</span>
+                {" → "}
+                <span className="text-brand-magenta font-medium">Plan</span>
+                {" → "}
+                <span className="text-brand-blue font-medium">Drive</span>
+              </p>
+              <p className="text-gray-500 mt-2 text-xs">
+                LiDAR → SLAM Toolbox → Particle Filter → Raceline → Pure Pursuit
+              </p>
             </div>
           </div>
         </section>
 
         {/* Resources */}
-        <section className="py-24 border-b border-white/10">
+        <section className="py-16 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Resources</h2>
-              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Documentation, code, and footage from our competition run.
+            <h2 className="text-2xl md:text-3xl font-bold mb-8">Resources</h2>
+
+            <div className="max-w-md p-8 rounded-2xl bg-brand-dark border border-brand-blue/30">
+              <Github className="h-8 w-8 text-brand-blue mb-4" />
+              <h3 className="text-lg font-bold mb-2">GitHub</h3>
+              <p className="text-sm text-gray-400 mb-4">
+                Stack docs and implementation details. Coming soon.
               </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="p-10 rounded-3xl bg-brand-dark border-2 border-brand-blue/30">
-                <div className="w-14 h-14 rounded-xl bg-brand-blue/10 flex items-center justify-center mb-6">
-                  <Github className="h-8 w-8 text-brand-blue" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">Tech Stack & Documentation</h3>
-                <p className="text-lg text-gray-400 mb-6">
-                  Our full competition stack — architecture, setup guides, and
-                  implementation details — will be published on GitHub.
-                </p>
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-2 text-brand-blue hover:text-brand-blue-hover font-medium transition-colors"
-                >
-                  GitHub repository
-                  <ExternalLink size={16} />
-                </a>
-                <p className="text-sm text-gray-500 mt-3">Link coming soon</p>
-              </div>
-
-              <div className="p-10 rounded-3xl bg-brand-dark border-2 border-brand-magenta/30">
-                <div className="w-14 h-14 rounded-xl bg-brand-magenta/10 flex items-center justify-center mb-6">
-                  <Play className="h-8 w-8 text-brand-magenta" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">Competition Run Videos</h3>
-                <p className="text-lg text-gray-400 mb-6">
-                  Watch our agents navigate the track — qualifying laps, race
-                  highlights, and key moments from the ICRA 2026 simulation run.
-                </p>
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-2 text-brand-magenta hover:text-brand-magenta-hover font-medium transition-colors"
-                >
-                  View videos
-                  <ExternalLink size={16} />
-                </a>
-                <p className="text-sm text-gray-500 mt-3">Links coming soon</p>
-              </div>
+              <a
+                href="#"
+                className="inline-flex items-center gap-2 text-brand-blue hover:text-brand-blue-hover font-medium transition-colors text-sm"
+              >
+                Repository
+                <ExternalLink size={14} />
+              </a>
             </div>
           </div>
         </section>
 
         {/* Future competitions */}
-        <section className="py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">What&apos;s Next</h2>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-              We are preparing for upcoming simulation and physical racing events.
-              As we lock in new competitions, they will be added here — along with
-              results, repos, and race footage.
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">What&apos;s Next</h2>
+            <p className="text-gray-400 max-w-xl">
+              More competitions coming. Results and repos will be posted here.
             </p>
           </div>
         </section>

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Penn RoboRacer Club",
-  description: "Student robotics collective at the University of Pennsylvania — autonomous racing competitions and open-source platforms.",
+  description: "Student robotics collective at the University of Pennsylvania. Autonomous racing competitions and open-source platforms.",
 };
 
 export default function RootLayout({

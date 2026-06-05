@@ -1,87 +1,72 @@
 import Image from "next/image";
 import { ArrowRight, Cpu, Trophy, Users, Ruler, DollarSign, Eye, Brain, GraduationCap, Zap, ScanLine } from "lucide-react";
-import HeroTitle from "@/components/home/HeroTitle";
+import PageHero from "@/components/layout/PageHero";
 import InvestigationCard from "@/components/roboracer-mini/InvestigationCard";
 
 const carInvestigations = [
   {
-    name: "Car Option A",
-    summary: "Placeholder — first chassis candidate under evaluation.",
-    status: "Investigating",
+    name: "Custom 1/18 RC Truck",
+    summary:
+      "Our in-house build. Customized 1/18-scale RC truck with Raspberry Pi 5 and Intel RealSense D435i.",
+    status: "In Development",
     details: [
-      { label: "Scale", value: "TBD" },
-      { label: "Estimated Cost", value: "TBD" },
-      { label: "Chassis Type", value: "TBD" },
-      { label: "Sensor Mounting", value: "TBD" },
-      { label: "Pros", value: "Details coming soon." },
-      { label: "Cons", value: "Details coming soon." },
+      { label: "Scale", value: "1/18th scale RC truck" },
+      { label: "Chassis", value: "Customized RC truck platform" },
+      { label: "Compute", value: "Raspberry Pi 5" },
+      { label: "Camera", value: "Intel RealSense D435i" },
+      { label: "Motor Control", value: "Custom ESC (model TBD)" },
+      { label: "Software Stack", value: "ROS 2 / custom autonomy stack (TBD)" },
+      { label: "Notes", value: "Fully custom integration. Chassis, ESC, and sensor mounting designed by the club." },
     ],
+    photoSlots: 3,
+    videoSlots: 2,
   },
   {
-    name: "Car Option B",
-    summary: "Placeholder — second chassis candidate under evaluation.",
-    status: "Investigating",
+    name: "Lehigh E116",
+    summary:
+      "E116 from Lehigh University. 1/16-scale Traxxas chassis with Jetson and RealSense D435i.",
+    status: "Reference Platform",
     details: [
-      { label: "Scale", value: "TBD" },
-      { label: "Estimated Cost", value: "TBD" },
-      { label: "Chassis Type", value: "TBD" },
-      { label: "Sensor Mounting", value: "TBD" },
-      { label: "Pros", value: "Details coming soon." },
-      { label: "Cons", value: "Details coming soon." },
+      { label: "Origin", value: "Lehigh University, E116 platform" },
+      { label: "Scale", value: "1/16th scale" },
+      { label: "Chassis", value: "Traxxas RC chassis" },
+      { label: "Compute", value: "NVIDIA Jetson" },
+      { label: "Camera", value: "Intel RealSense D435i" },
+      { label: "Notes", value: "Established reference design we are studying for RoboRacer-mini hardware and software choices." },
     ],
+    photoSlots: 2,
+    videoSlots: 1,
   },
   {
-    name: "Car Option C",
-    summary: "Placeholder — third chassis candidate under evaluation.",
+    name: "Waveshare PiRacer Pro",
+    summary:
+      "Commercial DonkeyCar-ready racer. 4WD, RC380 motor, open-source ecosystem on Raspberry Pi 4.",
     status: "Investigating",
     details: [
-      { label: "Scale", value: "TBD" },
-      { label: "Estimated Cost", value: "TBD" },
-      { label: "Chassis Type", value: "TBD" },
-      { label: "Sensor Mounting", value: "TBD" },
-      { label: "Pros", value: "Details coming soon." },
-      { label: "Cons", value: "Details coming soon." },
+      { label: "Platform", value: "Waveshare PiRacer Pro AI Kit" },
+      { label: "Compute", value: "Raspberry Pi 4 Model B" },
+      { label: "Software", value: "DonkeyCar (Keras/TensorFlow, OpenCV)" },
+      { label: "OS", value: "Raspberry Pi OS (Raspbian), Python" },
+      { label: "Camera (stock)", value: "5 MP HD, 160° FOV wide-angle" },
+      { label: "Display", value: "0.91\" OLED (128×32). IP, memory, power." },
+      { label: "Drive", value: "Ackermann steering, 4WD, front/rear differentials" },
+      { label: "Suspension", value: "Adjustable oil-filled shocks, 4WD independent" },
+      { label: "Motor", value: "RC380 carbon-brushed (~15,000 RPM idle)" },
+      { label: "Servo", value: "6 kg·cm torque" },
+      { label: "Power", value: "8.4 V, 4× 18650 (2S2P, batteries not included)" },
+      { label: "Connectivity", value: "2.4 / 5 GHz WiFi, Bluetooth 5.0" },
+      { label: "Wheelbase", value: "~174 mm (kit ~25.5 × 14 × 21.5 cm)" },
+      { label: "Notes", value: "Off-the-shelf DonkeyCar stack; useful baseline for teaching and rapid prototyping." },
     ],
-  },
-  {
-    name: "Car Option D",
-    summary: "Placeholder — fourth chassis candidate under evaluation.",
-    status: "Investigating",
-    details: [
-      { label: "Scale", value: "TBD" },
-      { label: "Estimated Cost", value: "TBD" },
-      { label: "Chassis Type", value: "TBD" },
-      { label: "Sensor Mounting", value: "TBD" },
-      { label: "Pros", value: "Details coming soon." },
-      { label: "Cons", value: "Details coming soon." },
-    ],
+    photoSlots: 2,
+    videoSlots: 2,
   },
 ];
 
 export default function RoboRacerMiniPage() {
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/hero_background.png"
-            alt="RoboRacer-mini Hero Background"
-            fill
-            className="object-cover opacity-60"
-            priority
-          />
-          <div className="absolute inset-0 bg-brand-dark/50" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <HeroTitle />
-          <p className="text-2xl md:text-3xl text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed">
-            We are building a platform for high-schoolers and undergraduates to
-            master autonomous racing.
-          </p>
-        </div>
-      </section>
+      <PageHero title="RoboRacer-mini" />
 
       <div className="bg-gradient-to-b from-brand-dark to-brand-[#ec4899]">
         {/* Flowchart Section */}
@@ -276,13 +261,13 @@ export default function RoboRacerMiniPage() {
             <div className="text-center mb-20">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">Chassis Investigation</h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                We are evaluating several 1/16-scale platforms to find the right
-                balance of cost, modifiability, and performance. Expand each
-                option to see details.
+                Three platforms we are building on or learning from. Custom 1/18
+                truck, Lehigh reference car, DonkeyCar-ready kit. Expand each for
+                specs, photos, and videos.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               {carInvestigations.map((car) => (
                 <InvestigationCard key={car.name} {...car} />
               ))}

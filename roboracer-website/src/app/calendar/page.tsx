@@ -1,4 +1,5 @@
 import { MapPin, Clock } from "lucide-react";
+import PageHero from "@/components/layout/PageHero";
 
 const events = [
     {
@@ -32,49 +33,50 @@ const events = [
 
 export default function CalendarPage() {
     return (
-        <div className="min-h-screen py-24 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-                <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-magenta">
-                        Calendar
-                    </h1>
-                    <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                        Upcoming workshops, meetings, and races.
-                    </p>
-                </div>
+        <div className="flex flex-col">
+            <PageHero title="Calendar" />
 
-                <div className="space-y-6">
-                    {events.map((event) => (
-                        <div key={event.id} className="bg-white/5 rounded-2xl p-6 border border-white/10 hover:border-brand-magenta/50 transition-colors duration-300 flex flex-col md:flex-row gap-6">
-                            <div className="flex-shrink-0 flex flex-col items-center justify-center bg-brand-dark rounded-xl p-4 w-full md:w-32 border border-white/5">
-                                <span className="text-sm text-brand-blue font-bold uppercase">{event.date.split(' ')[0]}</span>
-                                <span className="text-3xl font-bold text-white">{event.date.split(' ')[1].replace(',', '')}</span>
-                                <span className="text-xs text-gray-500">{event.date.split(' ')[2]}</span>
-                            </div>
+            <div className="bg-gradient-to-b from-brand-dark to-brand-[#ec4899]">
+                <section className="py-16 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-4xl mx-auto">
+                        <p className="text-gray-400 mb-12">
+                            Upcoming workshops, meetings, and races.
+                        </p>
 
-                            <div className="flex-grow">
-                                <div className="flex flex-wrap gap-2 mb-2">
-                                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-white/10 text-gray-300">
-                                        {event.category}
-                                    </span>
-                                </div>
-                                <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
-                                <p className="text-gray-400 mb-4">{event.description}</p>
-
-                                <div className="flex flex-col sm:flex-row gap-4 text-sm text-gray-500">
-                                    <div className="flex items-center">
-                                        <Clock size={16} className="mr-2 text-brand-magenta" />
-                                        {event.time}
+                        <div className="space-y-6">
+                            {events.map((event) => (
+                                <div key={event.id} className="bg-white/5 rounded-2xl p-6 border border-white/10 hover:border-brand-magenta/50 transition-colors duration-300 flex flex-col md:flex-row gap-6">
+                                    <div className="flex-shrink-0 flex flex-col items-center justify-center bg-brand-dark rounded-xl p-4 w-full md:w-32 border border-white/5">
+                                        <span className="text-sm text-brand-blue font-bold uppercase">{event.date.split(' ')[0]}</span>
+                                        <span className="text-3xl font-bold text-white">{event.date.split(' ')[1].replace(',', '')}</span>
+                                        <span className="text-xs text-gray-500">{event.date.split(' ')[2]}</span>
                                     </div>
-                                    <div className="flex items-center">
-                                        <MapPin size={16} className="mr-2 text-brand-blue" />
-                                        {event.location}
+
+                                    <div className="flex-grow">
+                                        <div className="flex flex-wrap gap-2 mb-2">
+                                            <span className="text-xs font-medium px-2 py-1 rounded-full bg-white/10 text-gray-300">
+                                                {event.category}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
+                                        <p className="text-gray-400 mb-4">{event.description}</p>
+
+                                        <div className="flex flex-col sm:flex-row gap-4 text-sm text-gray-500">
+                                            <div className="flex items-center">
+                                                <Clock size={16} className="mr-2 text-brand-magenta" />
+                                                {event.time}
+                                            </div>
+                                            <div className="flex items-center">
+                                                <MapPin size={16} className="mr-2 text-brand-blue" />
+                                                {event.location}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
+                    </div>
+                </section>
             </div>
         </div>
     );

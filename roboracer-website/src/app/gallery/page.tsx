@@ -1,3 +1,5 @@
+import PageHero from "@/components/layout/PageHero";
+
 export default function GalleryPage() {
     const images = Array.from({ length: 9 }).map((_, i) => ({
         id: i,
@@ -6,29 +8,30 @@ export default function GalleryPage() {
     }));
 
     return (
-        <div className="min-h-screen py-24 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-magenta">
-                        Gallery
-                    </h1>
-                    <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                        Highlights from our events, races, and build sessions.
-                    </p>
-                </div>
+        <div className="flex flex-col">
+            <PageHero title="Gallery" />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {images.map((img) => (
-                        <div
-                            key={img.id}
-                            className={`bg-white/5 rounded-xl overflow-hidden border border-white/10 relative hover:scale-[1.02] transition-transform duration-300 ${img.aspect}`}
-                        >
-                            <div className="absolute inset-0 flex items-center justify-center bg-gray-900 text-gray-700">
-                                <span className="text-lg font-medium">Image Placeholder {img.id + 1}</span>
-                            </div>
+            <div className="bg-gradient-to-b from-brand-dark to-brand-[#ec4899]">
+                <section className="py-16 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <p className="text-gray-400 mb-12 max-w-2xl">
+                            Highlights from events, races, and build sessions.
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {images.map((img) => (
+                                <div
+                                    key={img.id}
+                                    className={`bg-white/5 rounded-xl overflow-hidden border border-white/10 relative hover:scale-[1.02] transition-transform duration-300 ${img.aspect}`}
+                                >
+                                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900 text-gray-700">
+                                        <span className="text-lg font-medium">Image Placeholder {img.id + 1}</span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
+                    </div>
+                </section>
             </div>
         </div>
     );
