@@ -18,7 +18,7 @@ export default async function WaveshareDocumentationPage() {
   return (
     <DocumentationLayout
       title="Waveshare PiRacer Pro"
-      subtitle="Donkeycar investigation documentation for RoboRacer-mini."
+      subtitle="Investigating the Waveshare PiRacer Pro for RoboRacer-mini"
     >
       <DocTableOfContents headings={toc} />
       <DocumentationContent content={content} assetBase="waveshare" />

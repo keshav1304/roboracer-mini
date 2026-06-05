@@ -17,8 +17,8 @@ export default async function LehighDocumentationPage() {
 
   return (
     <DocumentationLayout
-      title="Lehigh E116"
-      subtitle="Investigation journal for the Lehigh University E116 platform."
+      title="Lehigh UniversityE116"
+      subtitle="Journey through E116 course materials and platform"
     >
       <DocTableOfContents headings={toc} />
       <DocumentationContent content={content} assetBase="lehigh" />
