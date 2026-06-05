@@ -192,8 +192,6 @@ Line following is the simpler of the two CV autopilots. It tracks a single color
 
 [![Line following demo](https://img.youtube.com/vi/U_DXo-ofhXc/hqdefault.jpg)](https://www.youtube.com/watch?v=U_DXo-ofhXc)
 
-*Autonomous line following on the PiRacer Pro*
-
 ### How it works
 
 The controller lives in `cv_parts/line_follower.py`. Each frame:
@@ -203,18 +201,6 @@ The controller lives in `cv_parts/line_follower.py`. Each frame:
 3. Build a column histogram; the peak column is the line position.
 4. A PID controller drives that peak toward `TARGET_PIXEL`.
 5. Throttle ramps down on turns and up on straights.
-
-```
-Camera frame
-┌─────────────────────────────┐
-│                             │
-│  ─ ─ ─ scan band ─ ─ ─ ─ ─  │  ← SCAN_Y
-│         ████                │  ← yellow pixels detected
-│                             │
-└─────────────────────────────┘
-         ↑
-    PID steers to keep peak at TARGET_PIXEL
-```
 
 <img src="pictures/line%20following%20overlay.png" alt="LineFollower CV overlay showing scan band and detected tape" width="480">
 
@@ -260,25 +246,22 @@ Lane keeping extends line follow to two boundaries. The car steers toward the mi
 
 [![Lane keeping demo](https://img.youtube.com/vi/HCT4SYDuZ0k/hqdefault.jpg)](https://www.youtube.com/watch?v=HCT4SYDuZ0k)
 
-*Autonomous lane keeping between yellow tape and white lane line*
-
 ### How it works
 
 The controller is `cv_parts/lane_keeper.py`. Each frame:
 
 1. Scan the same horizontal band (`LK_SCAN_Y`, `LK_SCAN_HEIGHT`).
 2. Detect a left line and right line with separate HSV masks.
-3. In `yellow_white` mode (our default): yellow/orange/red tape on the left, white or light-gray paint on the right.
-4. Find the strongest line-like contour in each half of the image.
-5. Compute `lane_center = (left_x + right_x) / 2` and PID-steer so the center aligns with the image midpoint.
-6. If only one line is visible, estimate center using `LK_LANE_WIDTH` as an offset.
+3. Find the strongest line-like contour in each half of the image.
+4. Compute `lane_center = (left_x + right_x) / 2` and PID-steer so the center aligns with the image midpoint.
+5. If only one line is visible, estimate center using `LK_LANE_WIDTH` as an offset.
 
 ```
         left tape          right line
             |                    |
             |    lane_center     |
             |         ↓          |
-            |    ────●────       |  ← steer to center ● on image
+            |     ────●────      |  ← steer to center ● on image
             |                    |
 ```
 
@@ -347,7 +330,6 @@ Line follow and lane keep are a reasonable first closed-loop module. The Donkeyc
 | Module | What it adds | Starting point in Donkeycar |
 | --- | --- | --- |
 | **Path following** | Drive a saved trajectory with PID instead of vision | `PATH_FILENAME`, `PID_P/I/D` in `config.py`; record path with joystick buttons |
-| **Donkey Gym simulator** | Same `manage.py drive` workflow on a virtual track before hardware | `DONKEY_GYM = True` in `config.py`; `donkeycar/mysim/` |
 | **Gap follow (lidar)** | F1TENTH-style steering toward the largest opening in a scan | `USE_LIDAR = True`, `LIDAR_TYPE = 'RP'`; add an RPLidar part in `manage.py` |
 | **Depth-based gap follow** | Obstacle avoidance from a depth image instead of colored tape | `CAMERA_TYPE = "D435"` and a depth-based CV part (see E116 gap follow for the algorithm idea) |
 | **AprilTag / marker localization** | Known pose on a mapped course; corridor or waypoint following | New `cv_parts` or Donkeycar `Localizer` model; Lehigh E116 already uses tag IDs 100-199 / 200+ |
@@ -356,17 +338,15 @@ Line follow and lane keep are a reasonable first closed-loop module. The Donkeyc
 | **Stop sign / object detector** | Trigger braking when a class is detected in frame | `STOP_SIGN_DETECTOR = True` or a custom detector part |
 | **Fisheye correction** | Straighter lane geometry before CV | `ENABLE_FISHEYE_UNDISTORT = True` after calibration (`calibrate.py`, `undistort.py`) |
 
-A sensible curriculum after lane keep: (1) add odometry or IMU so throttle scales with actual speed, (2) replace tape following with lidar or depth gap follow, (3) introduce marker-based localization for multi-turn courses.
-
 ### What to build on next
 
-**Keep the parts pipeline.** The main value of this repo is that steering, throttle, camera, and autopilot are already wired through named inputs/outputs. New modules should be new Donkeycar `Part` classes (like `cv_parts/lane_keeper.py`) rather than standalone scripts, so they share the web UI and e-stop paths.
+**Keep the parts pipeline.** The main value of this system is that steering, throttle, camera, and autopilot are already wired through named inputs/outputs. New modules should be new Donkeycar `Part` classes (like `cv_parts/lane_keeper.py`) rather than standalone scripts, so they share the web UI and e-stop paths.
 
 **Raise image quality first.** Calibrate fisheye undistort, bump `IMAGE_W` / `IMAGE_H` if the Pi keeps up, and consider a better camera module (Pi Camera Module 3, HQ cam, or a USB camera with a narrower FOV). Sharper, less distorted frames help lane keep and gap-follow CV more than any change on a blurry 160×120 stream.
 
 **Modernize the runtime carefully.** Donkeycar is the bottleneck, not the PiRacer hardware. Options: pin a working venv on the Waveshare image for labs, or port the `cv_parts` and teleop layer to a small modern stack (FastAPI web UI + OpenCV + PCA9685) while keeping the same pedagogical progression.
 
-**Borrow from E116 where Donkeycar stops.** The Lehigh stack already implements AprilTag corridor follow and RealSense bring-up. RoboRacer-mini can reuse those algorithms inside Donkeycar parts, or run a hybrid: Donkeycar for teleop and CV autopilot, ROS 2 only for advanced modules.
+**Borrow from E116 where Donkeycar stops.** The Lehigh stack already implements AprilTag corridor follow using RealSense. RoboRacer-mini can reuse those algorithms inside Donkeycar parts, or run a hybrid: Donkeycar for teleop and CV autopilot, ROS 2 only for advanced modules.
 
 **Add closed-loop metrics.** Log lap time, cross-track error, and detection confidence to CSV or MQTT (`HAVE_MQTT_TELEMETRY`). Students need numbers to compare PID tuning and lane keep vs line follow.
 
@@ -384,27 +364,11 @@ Donkeycar already has hooks for several sensors in `config.py` and `manage.py`. 
 | **AprilTag camera (existing Pi cam)** | Absolute lateral position on a tagged course | Software only: `apriltag` library in a new `cv_parts` module | Corridor centering between tag walls (E116-style), pit-stop markers, start/finish |
 | **Ultrasonic (HC-SR04)** | Cheap front clearance | Custom GPIO part (not built into Donkeycar by default) | Emergency stop before hitting a barrier; beginner-friendly supplement to lidar |
 
-Typical integration pattern:
-
-```
-Sensor Part(s)          Vision / CV Part               Actuators
-     |                           |                        |
-  lidar scan ──────────► gap_follow.py ──► pilot/angle, pilot/throttle ──► PCA9685
-  cam/depth_array ─────►                                    │
-  imu/accel/yaw ───────► (optional fusion)                  │
-  enc/speed ───────────► throttle filter                    │
-```
-
-For RoboRacer-mini specifically, a practical BOM order would be: (1) upgraded camera + fisheye calibration, (2) MPU6050 on the existing I2C bus, (3) wheel encoder for speed control, (4) RPLidar or RealSense for gap follow and obstacle avoidance. That progression keeps the Donkeycar software model but closes the largest gaps versus competition-grade platforms: poor optics, no proprioception, and no range sensing.
-
 ---
 
 ## Related Docs
 
-- [Teleop guide](./teleop.md): gamepad setup, PWM calibration, and troubleshooting without ROS
 - [Donkeycar docs](https://docs.donkeycar.com/)
 - [Waveshare PiRacer Pro wiki](https://www.waveshare.com/wiki/PiRacer-Pro)
 
 ---
-
-*Hardware and parameters match the RoboRacer-mini PiRacer Pro build in `donkeycar/mycar/`.*
