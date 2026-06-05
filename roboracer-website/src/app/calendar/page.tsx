@@ -34,15 +34,14 @@ const events = [
 export default function CalendarPage() {
     return (
         <div className="flex flex-col">
-            <PageHero title="Calendar" />
+            <PageHero
+                title="Calendar"
+                subtitle="Upcoming workshops, meetings, and races."
+            />
 
             <div className="bg-gradient-to-b from-brand-dark to-brand-[#ec4899]">
                 <section className="py-16 px-4 sm:px-6 lg:px-8">
-                    <div className="max-w-4xl mx-auto">
-                        <p className="text-gray-400 mb-12">
-                            Upcoming workshops, meetings, and races.
-                        </p>
-
+                    <div className="max-w-5xl mx-auto">
                         <div className="space-y-6">
                             {events.map((event) => (
                                 <div key={event.id} className="bg-white/5 rounded-2xl p-6 border border-white/10 hover:border-brand-magenta/50 transition-colors duration-300 flex flex-col md:flex-row gap-6">

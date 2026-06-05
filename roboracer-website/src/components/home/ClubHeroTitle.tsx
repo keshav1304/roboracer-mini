@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function ClubHeroTitle() {
     return (
-        <div className="flex flex-col items-center justify-center mb-6">
+        <div className="flex flex-col items-center justify-center mb-4">
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-center">
                 <motion.span
                     initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}

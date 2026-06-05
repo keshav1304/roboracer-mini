@@ -9,15 +9,14 @@ export default function GalleryPage() {
 
     return (
         <div className="flex flex-col">
-            <PageHero title="Gallery" />
+            <PageHero
+                title="Gallery"
+                subtitle="Highlights from events, races, and build sessions."
+            />
 
             <div className="bg-gradient-to-b from-brand-dark to-brand-[#ec4899]">
                 <section className="py-16 px-4 sm:px-6 lg:px-8">
-                    <div className="max-w-7xl mx-auto">
-                        <p className="text-gray-400 mb-12 max-w-2xl">
-                            Highlights from events, races, and build sessions.
-                        </p>
-
+                    <div className="max-w-5xl mx-auto">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {images.map((img) => (
                                 <div

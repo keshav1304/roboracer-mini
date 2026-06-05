@@ -1,42 +1,8 @@
-import Image from "next/image";
-import { ArrowRight, Cpu, Trophy, Users, Ruler, DollarSign, Eye, Brain, GraduationCap, Zap, ScanLine } from "lucide-react";
+import { Cpu, Trophy, Users, Ruler, DollarSign, Eye, Brain, GraduationCap, Zap, ScanLine, ExternalLink, Globe } from "lucide-react";
 import PageHero from "@/components/layout/PageHero";
 import InvestigationCard from "@/components/roboracer-mini/InvestigationCard";
 
 const carInvestigations = [
-  {
-    name: "Custom 1/18 RC Truck",
-    summary:
-      "Our in-house build. Customized 1/18-scale RC truck with Raspberry Pi 5 and Intel RealSense D435i.",
-    status: "In Development",
-    details: [
-      { label: "Scale", value: "1/18th scale RC truck" },
-      { label: "Chassis", value: "Customized RC truck platform" },
-      { label: "Compute", value: "Raspberry Pi 5" },
-      { label: "Camera", value: "Intel RealSense D435i" },
-      { label: "Motor Control", value: "Custom ESC (model TBD)" },
-      { label: "Software Stack", value: "ROS 2 / custom autonomy stack (TBD)" },
-      { label: "Notes", value: "Fully custom integration. Chassis, ESC, and sensor mounting designed by the club." },
-    ],
-    photoSlots: 3,
-    videoSlots: 2,
-  },
-  {
-    name: "Lehigh E116",
-    summary:
-      "E116 from Lehigh University. 1/16-scale Traxxas chassis with Jetson and RealSense D435i.",
-    status: "Reference Platform",
-    details: [
-      { label: "Origin", value: "Lehigh University, E116 platform" },
-      { label: "Scale", value: "1/16th scale" },
-      { label: "Chassis", value: "Traxxas RC chassis" },
-      { label: "Compute", value: "NVIDIA Jetson" },
-      { label: "Camera", value: "Intel RealSense D435i" },
-      { label: "Notes", value: "Established reference design we are studying for RoboRacer-mini hardware and software choices." },
-    ],
-    photoSlots: 2,
-    videoSlots: 1,
-  },
   {
     name: "Waveshare PiRacer Pro",
     summary:
@@ -61,84 +27,103 @@ const carInvestigations = [
     photoSlots: 2,
     videoSlots: 2,
   },
+  {
+    name: "Lehigh E116",
+    summary:
+      "E116 from Lehigh University. 1/16-scale Traxxas chassis with Jetson and RealSense D435i.",
+    status: "Reference Platform",
+    details: [
+      { label: "Origin", value: "Lehigh University, E116 platform" },
+      { label: "Scale", value: "1/16th scale" },
+      { label: "Chassis", value: "Traxxas RC chassis" },
+      { label: "Compute", value: "NVIDIA Jetson" },
+      { label: "Camera", value: "Intel RealSense D435i" },
+      { label: "Notes", value: "Established reference design we are studying for RoboRacer-mini hardware and software choices." },
+    ],
+    photoSlots: 1,
+    videoSlots: 1,
+  },
+  {
+    name: "Custom 1/18 RC Truck",
+    summary:
+      "Our in-house build. Customized 1/18-scale RC truck with Raspberry Pi 5 and Intel RealSense D435i.",
+    status: "In Development",
+    details: [
+      { label: "Scale", value: "1/18th scale RC truck" },
+      { label: "Chassis", value: "Customized RC truck platform" },
+      { label: "Compute", value: "Raspberry Pi 5" },
+      { label: "Camera", value: "Intel RealSense D435i" },
+      { label: "Motor Control", value: "Custom ESC (model TBD)" },
+      { label: "Software Stack", value: "ROS 2 / custom autonomy stack (TBD)" },
+      { label: "Notes", value: "Fully custom integration. Chassis, ESC, and sensor mounting designed by the club." },
+    ],
+    photoSlots: 1,
+    videoSlots: 1,
+  },
 ];
 
 export default function RoboRacerMiniPage() {
   return (
     <div className="flex flex-col">
-      <PageHero title="RoboRacer-mini" />
+      <PageHero
+        title="RoboRacer-mini"
+        subtitle="Open-source platform for high-schoolers and undergraduates to master autonomous racing."
+      />
 
       <div className="bg-gradient-to-b from-brand-dark to-brand-[#ec4899]">
-        {/* Flowchart Section */}
+        {/* Inspired by RoboRacer */}
         <section className="py-24 relative z-20 border-b border-white/10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">How It Works</h2>
-              <p className="text-2xl text-gray-400 max-w-3xl mx-auto">
-                Master autonomous racing in three stages.
-              </p>
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-center">Inspired by RoboRacer</h2>
+            <p className="text-xl text-gray-300 leading-relaxed mb-4">
+              RoboRacer-mini takes inspiration from{" "}
+              <a
+                href="https://roboracer.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand-blue hover:text-brand-blue-hover font-medium"
+              >
+                RoboRacer
+              </a>
+              , formerly known as F1TENTH. The platform was developed at the
+              University of Pennsylvania and has grown into an international
+              open-source community for autonomous racing education and research.
+            </p>
+            <p className="text-lg text-gray-400 leading-relaxed mb-10">
+              RoboRacer-mini aims to bring that same hands-on learning to a
+              smaller, more affordable scale for high-school and undergraduate
+              students.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              <div className="p-6 rounded-2xl bg-white/5 border border-brand-blue/30 text-center">
+                <GraduationCap className="h-8 w-8 text-brand-blue mx-auto mb-3" />
+                <p className="text-3xl font-bold text-white mb-1">90+</p>
+                <p className="text-sm text-gray-400">Universities worldwide</p>
+              </div>
+              <div className="p-6 rounded-2xl bg-white/5 border border-brand-magenta/30 text-center">
+                <Trophy className="h-8 w-8 text-brand-magenta mx-auto mb-3" />
+                <p className="text-3xl font-bold text-white mb-1">24+</p>
+                <p className="text-sm text-gray-400">International competitions</p>
+              </div>
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center">
+                <Globe className="h-8 w-8 text-brand-blue mx-auto mb-3" />
+                <p className="text-lg font-bold text-white mb-1">Open ecosystem</p>
+                <p className="text-sm text-gray-400">Hardware, software, curriculum</p>
+              </div>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-12 md:gap-8 relative">
-              <div className="flex flex-col items-center text-center max-w-sm relative group">
-                <div className="w-80 h-52 relative rounded-xl overflow-hidden border-2 border-brand-blue/30 mb-8 shadow-2xl shadow-brand-blue/10 group-hover:border-brand-blue transition-colors duration-300">
-                  <Image
-                    src="/images/car_chassis.png"
-                    alt="Build a battery-powered car"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 mb-3">Build</h3>
-                <p className="text-gray-300 text-xl font-medium">
-                  Build a battery-powered car with a camera
-                </p>
-              </div>
-
-              <div className="hidden md:flex items-center justify-center text-brand-blue/50 md:mt-[4.75rem]">
-                <ArrowRight size={56} strokeWidth={1.5} />
-              </div>
-              <div className="md:hidden transform rotate-90 text-brand-blue/50 my-6">
-                <ArrowRight size={56} strokeWidth={1.5} />
-              </div>
-
-              <div className="flex flex-col items-center text-center max-w-sm relative group">
-                <div className="w-80 h-52 relative rounded-xl overflow-hidden border-2 border-brand-magenta/30 mb-8 shadow-2xl shadow-brand-magenta/10 group-hover:border-brand-magenta transition-colors duration-300">
-                  <Image
-                    src="/images/code_ros_2.png"
-                    alt="Write autonomous racing algorithms in VS Code"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 mb-3">Code</h3>
-                <p className="text-gray-300 text-xl font-medium">
-                  Write autonomous racing algorithms
-                </p>
-              </div>
-
-              <div className="hidden md:flex items-center justify-center text-brand-magenta/50 md:mt-[4.75rem]">
-                <ArrowRight size={56} strokeWidth={1.5} />
-              </div>
-              <div className="md:hidden transform rotate-90 text-brand-magenta/50 my-6">
-                <ArrowRight size={56} strokeWidth={1.5} />
-              </div>
-
-              <div className="flex flex-col items-center text-center max-w-sm relative group">
-                <div className="w-80 h-52 relative rounded-xl overflow-hidden border-2 border-indigo-500/30 mb-8 shadow-2xl shadow-indigo-500/10 group-hover:border-indigo-500 transition-colors duration-300">
-                  <Image
-                    src="/images/race_cars.png"
-                    alt="Autonomous cars racing on track"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 mb-3">Race</h3>
-                <p className="text-gray-300 text-xl font-medium">
-                  Compete in races with teams from across the world
-                </p>
-              </div>
-            </div>
+            <p className="text-center">
+              <a
+                href="https://roboracer.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-brand-blue hover:text-brand-blue-hover font-medium transition-colors"
+              >
+                Explore the RoboRacer platform
+                <ExternalLink size={16} />
+              </a>
+            </p>
           </div>
         </section>
 
@@ -261,9 +246,9 @@ export default function RoboRacerMiniPage() {
             <div className="text-center mb-20">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">Chassis Investigation</h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Three platforms we are building on or learning from. Custom 1/18
-                truck, Lehigh reference car, DonkeyCar-ready kit. Expand each for
-                specs, photos, and videos.
+                Three platforms we are building on or learning from. DonkeyCar-ready
+                kit, Lehigh reference car, custom 1/18 truck. Expand each for specs,
+                photos, and videos.
               </p>
             </div>
 
