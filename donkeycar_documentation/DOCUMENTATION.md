@@ -68,8 +68,9 @@ The [PiRacer Pro](https://www.waveshare.com/piracer-pro.htm) is a 1/10-scale rac
 | Brushless motor + ESC | Drive |
 | Steering servo | Ackermann steering |
 
-<!-- TODO: add photo of assembled PiRacer Pro (chassis, Pi, camera mount, expansion board) -->
-<img src="pictures/piracer-pro-assembled.jpeg" alt="PiRacer Pro assembled car" width="480">
+<img src="pictures/piracer%20pro%20hardware.jpg" alt="PiRacer Pro assembled car" width="480">
+
+*Assembled PiRacer Pro: Pi 4, expansion board, front camera, and 18650 pack*
 
 The PCA9685 channel map used in this project:
 
@@ -101,8 +102,9 @@ Controller / Autopilot     ← gamepad, web UI, CV, or trained model
        ESC                 ← PWM to steering servo (ch 0) and ESC (ch 1)
 ```
 
-<!-- TODO: add photo of web UI or gamepad teleop session -->
-<img src="pictures/donkeycar-web-ui.jpeg" alt="Donkeycar web control portal on laptop" width="480">
+<img src="pictures/donkeycar%20web%20UI.png" alt="Donkeycar web control portal" width="480">
+
+*Donkeycar web UI: live camera feed, mode selection, and virtual joystick*
 
 **Drivetrain:** `DRIVE_TRAIN_TYPE = "SERVO_ESC"` uses the onboard PCA9685 to output standard RC-style PWM pulses to the steering servo and ESC. Steering and throttle limits are set in `config.py` (`STEERING_LEFT_PWM`, `THROTTLE_FORWARD_PWM`, etc.).
 
@@ -220,8 +222,9 @@ Camera frame
     PID steers to keep peak at TARGET_PIXEL
 ```
 
-<!-- TODO: add screenshot of LineFollower CV overlay (scan band + yellow mask) -->
-<img src="pictures/line-follow-overlay.jpeg" alt="LineFollower CV overlay showing scan band and detected tape" width="480">
+<img src="pictures/line%20following%20overlay.png" alt="LineFollower CV overlay showing scan band and detected tape" width="480">
+
+*LineFollower overlay: scan band, yellow mask, and steering/throttle telemetry*
 
 ### Enabling line follow
 
@@ -284,9 +287,6 @@ The controller is `cv_parts/lane_keeper.py`. Each frame:
             |    ────●────       |  ← steer to center ● on image
             |                    |
 ```
-
-<!-- TODO: add screenshot of LaneKeeper CV overlay (yellow left, white right, lane center) -->
-<img src="pictures/lane-keep-overlay.jpeg" alt="LaneKeeper CV overlay with dual-line detection" width="480">
 
 ### Enabling lane keep
 
