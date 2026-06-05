@@ -1,11 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ImageIcon, Play } from "lucide-react";
+import { ChevronDown, ExternalLink, ImageIcon, Play } from "lucide-react";
 
 export interface InvestigationDetail {
     label: string;
     value: string;
+}
+
+export interface InvestigationVideo {
+    title: string;
+    youtubeId: string;
+    url: string;
 }
 
 export interface InvestigationCardProps {
@@ -15,6 +21,7 @@ export interface InvestigationCardProps {
     details: InvestigationDetail[];
     photoSlots?: number;
     videoSlots?: number;
+    videos?: InvestigationVideo[];
 }
 
 export default function InvestigationCard({
@@ -22,10 +29,14 @@ export default function InvestigationCard({
     summary,
     status,
     details,
-    photoSlots = 2,
-    videoSlots = 1,
+    photoSlots = 0,
+    videoSlots = 0,
+    videos = [],
 }: InvestigationCardProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const hasPhotos = photoSlots > 0;
+    const hasVideoPlaceholders = videoSlots > 0 && videos.length === 0;
+    const hasMedia = hasPhotos || videos.length > 0 || hasVideoPlaceholders;
 
     return (
         <div className="rounded-3xl bg-white/5 border border-white/10 overflow-hidden transition-colors duration-300 hover:border-brand-blue/50">
@@ -65,34 +76,73 @@ export default function InvestigationCard({
                             ))}
                         </dl>
 
-                        <div className="mt-10 pt-8 border-t border-white/10">
-                            <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-4">
-                                Photos &amp; Videos
-                            </h4>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
-                                {Array.from({ length: photoSlots }).map((_, i) => (
-                                    <div
-                                        key={`photo-${i}`}
-                                        className="aspect-video rounded-xl bg-white/5 border border-dashed border-white/20 flex flex-col items-center justify-center gap-2 text-gray-500"
-                                    >
-                                        <ImageIcon className="h-8 w-8 opacity-50" />
-                                        <span className="text-xs">Photo {i + 1}</span>
+                        {hasMedia && (
+                            <div className="mt-10 pt-8 border-t border-white/10">
+                                <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-4">
+                                    Photos &amp; Videos
+                                </h4>
+
+                                {hasPhotos && (
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+                                        {Array.from({ length: photoSlots }).map((_, i) => (
+                                            <div
+                                                key={`photo-${i}`}
+                                                className="aspect-video rounded-xl bg-white/5 border border-dashed border-white/20 flex flex-col items-center justify-center gap-2 text-gray-500"
+                                            >
+                                                <ImageIcon className="h-8 w-8 opacity-50" />
+                                                <span className="text-xs">Photo {i + 1}</span>
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {Array.from({ length: videoSlots }).map((_, i) => (
-                                    <div
-                                        key={`video-${i}`}
-                                        className="aspect-video rounded-xl bg-white/5 border border-dashed border-brand-magenta/30 flex flex-col items-center justify-center gap-2 text-gray-500"
-                                    >
-                                        <Play className="h-10 w-10 text-brand-magenta/50" />
-                                        <span className="text-xs">Video {i + 1}</span>
+                                )}
+
+                                {videos.length > 0 && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {videos.map((video) => (
+                                            <div key={video.youtubeId}>
+                                                <div className="relative aspect-video rounded-xl overflow-hidden border border-brand-magenta/30">
+                                                    <iframe
+                                                        src={`https://www.youtube.com/embed/${video.youtubeId}`}
+                                                        title={video.title}
+                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                        allowFullScreen
+                                                        className="absolute inset-0 w-full h-full"
+                                                    />
+                                                </div>
+                                                <a
+                                                    href={video.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1.5 mt-2 text-sm text-brand-magenta hover:text-brand-magenta-hover transition-colors"
+                                                >
+                                                    <Play size={12} />
+                                                    {video.title}
+                                                    <ExternalLink size={12} />
+                                                </a>
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
+                                )}
+
+                                {hasVideoPlaceholders && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {Array.from({ length: videoSlots }).map((_, i) => (
+                                            <div
+                                                key={`video-${i}`}
+                                                className="aspect-video rounded-xl bg-white/5 border border-dashed border-brand-magenta/30 flex flex-col items-center justify-center gap-2 text-gray-500"
+                                            >
+                                                <Play className="h-10 w-10 text-brand-magenta/50" />
+                                                <span className="text-xs">Video {i + 1}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {(hasPhotos || hasVideoPlaceholders) && videos.length === 0 && (
+                                    <p className="text-sm text-gray-500 mt-3">More media coming soon</p>
+                                )}
                             </div>
-                            <p className="text-sm text-gray-500 mt-3">Media coming soon</p>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>

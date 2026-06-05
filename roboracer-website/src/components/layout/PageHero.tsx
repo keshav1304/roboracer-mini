@@ -3,11 +3,12 @@ import Image from "next/image";
 interface PageHeroProps {
     title: string;
     subtitle: string;
+    compact?: boolean;
 }
 
-export default function PageHero({ title, subtitle }: PageHeroProps) {
+export default function PageHero({ title, subtitle, compact = false }: PageHeroProps) {
     return (
-        <section className="relative py-16 overflow-hidden">
+        <section className={`relative overflow-hidden ${compact ? "py-12" : "py-16"}`}>
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/images/hero_background.png"
@@ -20,10 +21,7 @@ export default function PageHero({ title, subtitle }: PageHeroProps) {
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p className="text-sm uppercase tracking-widest text-brand-blue mb-4">
-                    Penn RoboRacer Club
-                </p>
-                <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-magenta">
+                <h1 className={`text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-magenta ${compact ? "mb-4" : "mb-6"}`}>
                     {title}
                 </h1>
                 <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">

@@ -25,7 +25,18 @@ const carInvestigations = [
       { label: "Notes", value: "Off-the-shelf DonkeyCar stack; useful baseline for teaching and rapid prototyping." },
     ],
     photoSlots: 2,
-    videoSlots: 2,
+    videos: [
+      {
+        title: "Line following demo",
+        youtubeId: "U_DXo-ofhXc",
+        url: "https://www.youtube.com/shorts/U_DXo-ofhXc",
+      },
+      {
+        title: "Lane keeping demo",
+        youtubeId: "HCT4SYDuZ0k",
+        url: "https://www.youtube.com/watch?v=HCT4SYDuZ0k",
+      },
+    ],
   },
   {
     name: "Lehigh E116",
@@ -41,7 +52,18 @@ const carInvestigations = [
       { label: "Notes", value: "Established reference design we are studying for RoboRacer-mini hardware and software choices." },
     ],
     photoSlots: 1,
-    videoSlots: 1,
+    videos: [
+      {
+        title: "Hardware overview",
+        youtubeId: "1DGavq1OEdM",
+        url: "https://www.youtube.com/watch?v=1DGavq1OEdM",
+      },
+      {
+        title: "Follow the Gap demo",
+        youtubeId: "t0ZZ9GUBdJ0",
+        url: "https://www.youtube.com/watch?v=t0ZZ9GUBdJ0",
+      },
+    ],
   },
   {
     name: "Custom 1/18 RC Truck",
@@ -68,11 +90,12 @@ export default function RoboRacerMiniPage() {
       <PageHero
         title="RoboRacer-mini"
         subtitle="Open-source platform for high-schoolers and undergraduates to master autonomous racing."
+        compact
       />
 
       <div className="bg-gradient-to-b from-brand-dark to-brand-[#ec4899]">
         {/* Inspired by RoboRacer */}
-        <section className="py-24 relative z-20 border-b border-white/10">
+        <section className="py-14 relative z-20 border-b border-white/10">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-center">Inspired by RoboRacer</h2>
             <p className="text-xl text-gray-300 leading-relaxed mb-4">
@@ -128,9 +151,9 @@ export default function RoboRacerMiniPage() {
         </section>
 
         {/* Evolution Section */}
-        <section className="py-24 relative z-20 border-b border-white/10">
+        <section className="py-14 relative z-20 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
+            <div className="text-center mb-12">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">The Evolution</h2>
               <p className="text-2xl text-gray-400 max-w-3xl mx-auto">
                 Reimagining autonomous racing to be accessible and powerful.
@@ -241,9 +264,9 @@ export default function RoboRacerMiniPage() {
         </section>
 
         {/* Chassis Investigation */}
-        <section className="py-24 relative z-20 border-b border-white/10">
+        <section className="py-14 relative z-20 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
+            <div className="text-center mb-12">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">Chassis Investigation</h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
                 Three platforms we are building on or learning from. DonkeyCar-ready
@@ -261,9 +284,9 @@ export default function RoboRacerMiniPage() {
         </section>
 
         {/* Why RoboRacer-mini? */}
-        <section className="py-24 relative z-10">
+        <section className="py-14 relative z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
+            <div className="text-center mb-12">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">Why RoboRacer-mini?</h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
                 We bridge the gap between theory and practice, providing a hands-on environment for future roboticists.

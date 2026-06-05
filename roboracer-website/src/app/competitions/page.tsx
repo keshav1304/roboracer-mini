@@ -56,11 +56,12 @@ export default function CompetitionsPage() {
       <PageHero
         title="Competitions"
         subtitle="We compete in autonomous racing challenges worldwide, testing our algorithms against the best teams in simulation and on the track."
+        compact
       />
 
       <div className="bg-gradient-to-b from-brand-dark to-brand-[#ec4899]">
-        <section className="py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto space-y-16">
+        <section className="py-14 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto space-y-12">
 
             {/* ICRA 2026 */}
             <div>
@@ -68,16 +69,12 @@ export default function CompetitionsPage() {
               <h2 className="text-3xl md:text-4xl font-bold mb-5">
                 Simulation Competition
               </h2>
-              <p className="text-lg text-gray-300 leading-relaxed mb-4">
+              <p className="text-lg text-gray-300 leading-relaxed mb-6">
                 The ICRA 2026 autonomous racing simulation challenge asks teams to
                 build a complete racing agent and deploy it in a high-fidelity
                 simulator. Each team submits a Docker container that must perceive
                 the track, localize on it, plan a racing line, and control the
                 vehicle without human input.
-              </p>
-              <p className="text-lg text-gray-400 leading-relaxed mb-8">
-                Penn RoboRacer Club competed against teams from around the world and
-                placed <span className="text-white font-medium">9th overall</span>.
               </p>
 
               <div className="flex flex-wrap gap-3">
