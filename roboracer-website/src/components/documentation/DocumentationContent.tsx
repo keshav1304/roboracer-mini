@@ -148,7 +148,7 @@ export default function DocumentationContent({
             <strong className="font-semibold text-white">{children}</strong>
           ),
           em: ({ children }) => <em className="text-gray-200 italic">{children}</em>,
-          hr: () => <hr className="my-10 border-white/10" />,
+          hr: () => null,
           blockquote: ({ children }) => (
             <blockquote className="border-l-4 border-brand-magenta/50 pl-5 my-6 text-gray-400 italic">
               {children}

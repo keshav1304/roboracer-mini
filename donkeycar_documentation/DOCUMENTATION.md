@@ -2,13 +2,15 @@
 
 ## TL;DR
 
-[Donkeycar](https://github.com/autorope/donkeycar) is an open-source Python framework for autonomous driving. This repo runs it on the **Waveshare PiRacer Pro**, a 1/10-scale kit built around a Raspberry Pi.
+[Donkeycar](https://github.com/autorope/donkeycar) is an open-source Python framework for autonomous driving. This repo runs it on the Waveshare PiRacer Pro, a 1/10-scale kit built around a Raspberry Pi, as part of RoboRacer-mini: a lighter alternative to the ROS-based Lehigh E116 stack for teaching physical AI.
 
-The car uses Donkeycar's modularity to construct many parts and have them communicate with each other. The parts include: a Pi camera that captures frames, a controller (gamepad, web UI, or autopilot) produces steering and throttle, and a PCA9685 board on the PiRacer Pro carrier drives the servo and ESC over I2C.
-
-Autonomy comes from how you control the autopilot control mode based on inputs from the Pi camera or other potentialy sensors.
+The car uses Donkeycar's modularity to construct many parts and have them communicate with each other. The parts include: a Pi camera that captures frames, a controller (gamepad, web UI, or autopilot) produces steering and throttle, and a PCA9685 board on the PiRacer Pro carrier drives the servo and ESC over I2C. We implemented classical CV autopilots for line following and lane keeping on colored tape and lane paint.
 
 **Key videos:** [Line following](https://www.youtube.com/watch?v=U_DXo-ofhXc) · [Lane keeping](https://www.youtube.com/watch?v=HCT4SYDuZ0k)
+
+**Evaluation.** The platform is a good fit for early labs: one Python process, a web UI, low cost, and a sturdy expansion-board power system. Tradeoffs are tedious 18650 battery setup, scattered and outdated Waveshare/Donkeycar docs, a legacy Python 3.7 stack, a basic fisheye camera at 160×120, and no lidar, IMU, or encoders out of the box. HSV lane follow works indoors but is lighting-sensitive.
+
+**Further steps.** After lane keep, add sensors Donkeycar already supports: better camera, MPU6050 IMU, wheel encoders, RPLidar or depth camera for gap follow. New modules should plug in as Donkeycar `Part` classes on the same `manage.py` loop rather than standalone scripts.
 
 ---
 
@@ -47,7 +49,7 @@ Autonomy comes from how you control the autopilot control mode based on inputs f
 
 ## What is Donkeycar?
 
-Instead of wiring together ROS nodes and launch files, Donkeycar allows you to assemble a vehicle from small Python **parts** that pass named data through a single loop. It is entirely a software system that runs on any hardware of your choice.
+Instead of wiring together ROS nodes and launch files, Donkeycar allows you to assemble a vehicle from small Python parts that pass named data through a single loop. It is entirely a software system that runs on any hardware of your choice.
 
 The main entry point is `manage.py`, which reads settings from `config.py` and optional overrides in `myconfig.py`. Donkeycar also ships with a Unity based simulator so students can iterate on software before touching hardware.
 
@@ -89,18 +91,10 @@ All vehicle code lives under `donkeycar/mycar/`. The stack is wired together in 
 
 ### Software pipeline
 
-```
-Pi Camera (PICAM)
-        |
-        v
-ImagePreprocessor          ← 180° rotation, optional fisheye undistort
-        |
-        v
-Controller / Autopilot     ← gamepad, web UI, CV, or trained model
-        |
-        v
-       ESC                 ← PWM to steering servo (ch 0) and ESC (ch 1)
-```
+1. Pi Camera (PICAM) captures frames from the front-facing camera module.
+2. ImagePreprocessor applies 180° rotation and optional fisheye undistortion.
+3. Controller / Autopilot produces steering and throttle from a gamepad, web UI, CV autopilot, or trained model.
+4. ESC (via PCA9685) sends PWM to the steering servo (channel 0) and motor ESC (channel 1).
 
 <img src="pictures/donkeycar%20web%20UI.png" alt="Donkeycar web control portal" width="480">
 
@@ -128,23 +122,23 @@ Getting the PiRacer Pro running is straightforward once the batteries and PWM ar
 
 ### Batteries
 
-The PiRacer Pro expansion board holds **four 18650 cells** (not included in the kit). They are wired **two in parallel, two in series (2P2S)**, giving a nominal **8.4 V** pack that feeds the motor and a buck-boost regulator for the Pi.
+The PiRacer Pro expansion board holds four 18650 cells (not included in the kit). They are wired two in parallel, two in series (2P2S), giving a nominal 8.4 V pack that feeds the motor and a buck-boost regulator for the Pi.
 
 | Detail | Notes |
 | --- | --- |
-| Cell format | Flat-top 18650 Li-ion, **length under 67 mm** |
-| Charger | Waveshare supplies an **8.4 V** charger; match the jack polarity before first plug-in |
+| Cell format | Flat-top 18650 Li-ion, length under 67 mm |
+| Charger | Waveshare supplies an 8.4 V charger; match the jack polarity before first plug-in |
 | On-board protection | HY2120 + AOD514 circuit: over-charge, over-discharge, over-current, and short-circuit protection |
 
 Battery setup is more tedious than it looks. You have to source four matching cells, confirm they physically fit, insert them with the correct orientation, and charge through the onboard port without repeatedly pulling the pack apart. There is no simple "state of charge" readout beyond what the OLED shows when Donkeycar is running.
 
-We were struggling with getting the car started due to having purchased **faulty 18650 cells** without realizing it. The car would not power on and the cells would consistently read 0V across the terminals. After realising that there were issues with the cells did we order new ones. Meanwhile, while experimenting with the old cells, including putting them in reverse order, the Pi or the ESC did not get damaged due to the onboard power board absorbing a lot of that abuse. The power electronics are the sturdiest part of the kit.
+We were struggling with getting the car started due to having purchased faulty 18650 cells without realizing it. The car would not power on and the cells would consistently read 0V across the terminals. After realising that there were issues with the cells did we order new ones. Meanwhile, while experimenting with the old cells, including putting them in reverse order, the Pi or the ESC did not get damaged due to the onboard power board absorbing a lot of that abuse. The power electronics are the sturdiest part of the kit.
 
 Cells we ordered: [Svenirven 18650 rechargeable batteries (Amazon)](https://www.amazon.com/Svenirven-Batteries-Rechargeable-Flashlight-Headlamps/dp/B0GX6MKR6B/ref=sr_1_8?crid=1YQGD44X3DQG2&dib=eyJ2IjoiMSJ9.CRQlVxsiMmg8iZdUBAFIK8uKjDPP7gqnPIEAPIt8yqxwsNUtCS8BwuBW07brIZnyqzyYsHT-rW7R8oGtfG4lNoOvThXWHiN2JANt-_dGE_t5Q1tTJFoukSu8RnEpASm67UjT7hPj6hFQY98taVFyxTZSq5CjQyKxNDRtOQYRLEvdQZ2RaNJsC2PwJcvn_hhRlZpSFdYyDzcuyVjW1SsJt_PdezSQqogmcQjPuaR7Coc.4E6F6Y9zbJEcMUiV_9qhe0gdNR93Ye2UoxdWLywGJRg&dib_tag=se&keywords=18650%2Bbattery&qid=1780532864&sprefix=18650%2Caps%2C193&sr=8-8) (order four; confirm flat-top and under 67 mm before buying).
 
 ### PiRacer image and first boot
 
-Waveshare ships a **pre-built microSD image** on their [wiki](https://www.waveshare.com/wiki/PiRacer_Pro_AI_Kit) with Raspberry Pi OS, Donkeycar, and PiRacer drivers already installed. That image was initially not installing the Pi 5. We initially tried setting up the Pi 5 with the latest versions of Pi OS and Python, but Donkeycar did not work on that. So, we downgraded to a Pi 4 and started from the provided image rather than building from scratch.
+Waveshare ships a pre-built microSD image on their [wiki](https://www.waveshare.com/wiki/PiRacer_Pro_AI_Kit) with Raspberry Pi OS, Donkeycar, and PiRacer drivers already installed. That image was initially not installing the Pi 5. We initially tried setting up the Pi 5 with the latest versions of Pi OS and Python, but Donkeycar did not work on that. So, we downgraded to a Pi 4 and started from the provided image rather than building from scratch.
 
 Typical first-boot steps:
 
@@ -158,7 +152,7 @@ The pre-built image gets you moving quickly, but it also locks you into whatever
 
 ### PWM tuning
 
-Each car's servo and ESC respond to slightly different pulse widths. PWM must be calibrated before teleop or autopilot, with **wheels off the ground** for the first pass.
+Each car's servo and ESC respond to slightly different pulse widths. PWM must be calibrated before teleop or autopilot, with wheels off the ground for the first pass.
 
 **Step 1: Verify I2C and run the sweep test**
 
@@ -188,13 +182,13 @@ Update both `config.py` (for `manage.py`) and the teleop scripts so all paths us
 python3 teleop_local.py
 ```
 
-Reverse on this ESC requires a **double-tap** on the stick (brake, then reverse), a hardware safety feature, not a software bug.
+Reverse on this ESC requires a double-tap on the stick (brake, then reverse), a hardware safety feature, not a software bug.
 
 ---
 
 ## Line Following
 
-Line following is the simpler of the two CV autopilots. It tracks a **single colored line** (yellow, orange, or red tape) and steers to keep that line at a fixed horizontal position in the camera image.
+Line following is the simpler of the two CV autopilots. It tracks a single colored line (yellow, orange, or red tape) and steers to keep that line at a fixed horizontal position in the camera image.
 
 [![Line following demo](https://img.youtube.com/vi/U_DXo-ofhXc/hqdefault.jpg)](https://www.youtube.com/watch?v=U_DXo-ofhXc)
 
@@ -204,8 +198,8 @@ Line following is the simpler of the two CV autopilots. It tracks a **single col
 
 The controller lives in `cv_parts/line_follower.py`. Each frame:
 
-1. Extract a horizontal **scan band** at `SCAN_Y` with height `SCAN_HEIGHT`.
-2. Convert to HSV and threshold for red/orange/yellow (hue wraps at 0 and 170–179).
+1. Extract a horizontal scan band at `SCAN_Y` with height `SCAN_HEIGHT`.
+2. Convert to HSV and threshold for red/orange/yellow (hue wraps at 0 and 170-179).
 3. Build a column histogram; the peak column is the line position.
 4. A PID controller drives that peak toward `TARGET_PIXEL`.
 5. Throttle ramps down on turns and up on straights.
@@ -262,7 +256,7 @@ Use `scripts/hsv_picker.py` on a captured frame to find HSV bounds for your tape
 
 ## Lane Keeping
 
-Lane keeping extends line follow to **two boundaries**. The car steers toward the **midpoint** between a left and right lane marker, which keeps it centered in a corridor rather than hugging one tape edge.
+Lane keeping extends line follow to two boundaries. The car steers toward the midpoint between a left and right lane marker, which keeps it centered in a corridor rather than hugging one tape edge.
 
 [![Lane keeping demo](https://img.youtube.com/vi/HCT4SYDuZ0k/hqdefault.jpg)](https://www.youtube.com/watch?v=HCT4SYDuZ0k)
 
@@ -273,7 +267,7 @@ Lane keeping extends line follow to **two boundaries**. The car steers toward th
 The controller is `cv_parts/lane_keeper.py`. Each frame:
 
 1. Scan the same horizontal band (`LK_SCAN_Y`, `LK_SCAN_HEIGHT`).
-2. Detect a **left line** and **right line** with separate HSV masks.
+2. Detect a left line and right line with separate HSV masks.
 3. In `yellow_white` mode (our default): yellow/orange/red tape on the left, white or light-gray paint on the right.
 4. Find the strongest line-like contour in each half of the image.
 5. Compute `lane_center = (left_x + right_x) / 2` and PID-steer so the center aligns with the image midpoint.
@@ -316,7 +310,7 @@ Run the same way as line follow: `python manage.py drive`, then switch to autopi
 | `LK_YELLOW_*`, `LK_WHITE_*` | HSV bounds for each boundary type |
 | `CV_PID_P`, `CV_PID_D` | Same PID gains as line follow |
 
-Lane keeper handles more realistic track layouts than single-line follow, but it needs **both markers visible** for best results. On sharp turns or when one line leaves the frame, it falls back to the single-line estimate and can drift if `LK_LANE_WIDTH` is wrong. The overlay color-codes left (yellow) and right (white) in the scan strip, which makes debugging much easier than line follow alone.
+Lane keeper handles more realistic track layouts than single-line follow, but it needs both markers visible for best results. On sharp turns or when one line leaves the frame, it falls back to the single-line estimate and can drift if `LK_LANE_WIDTH` is wrong. The overlay color-codes left (yellow) and right (white) in the scan strip, which makes debugging much easier than line follow alone.
 
 ---
 
@@ -332,15 +326,15 @@ Notes below come from building and running the PiRacer Pro stack in this repo, a
 
 ### Cons
 
-- **Poor and outdated documentation.** Waveshare's wiki, manual, and pre-built image instructions reference **old Raspberry Pi models**, older OS images, and setup steps that no longer match current boards. Donkeycar's own docs assume the classic Donkey build, not the PiRacer Pro carrier. Expect to cross-reference GitHub issues, [DIY Robocars PiRacer tips](https://www.diyrobocars.com/2025/06/28/tips-for-installing-donkeycar-on-the-waveshare-piracer-pro/), and this repo rather than following one official guide end to end.
-- **Ancient Python stack.** Donkeycar has not kept pace with modern Python. The Waveshare image and the Donkeycar versions it supports target **Python 3.7–3.8** and older TensorFlow/PyTorch pins. The whole system runs on legacy dependencies because that is what Donkeycar still supports.
+- **Poor and outdated documentation.** Waveshare's wiki, manual, and pre-built image instructions reference old Raspberry Pi models, older OS images, and setup steps that no longer match current boards. Donkeycar's own docs assume the classic Donkey build, not the PiRacer Pro carrier. Expect to cross-reference GitHub issues, [DIY Robocars PiRacer tips](https://www.diyrobocars.com/2025/06/28/tips-for-installing-donkeycar-on-the-waveshare-piracer-pro/), and this repo rather than following one official guide end to end.
+- **Ancient Python stack.** Donkeycar has not kept pace with modern Python. The Waveshare image and the Donkeycar versions it supports target Python 3.7-3.8 and older TensorFlow/PyTorch pins. The whole system runs on legacy dependencies because that is what Donkeycar still supports.
 - **Poor camera quality.** The kit ships with a basic Pi Camera (OV5647-class, wide fisheye). Donkeycar downscales to 160×120 for inference, which is fine for demos but loses detail for lane edges, distant markers, and ML training. Distortion, rolling shutter, and weak low-light performance show up quickly once you leave a well-lit tape course.
 - **Camera-only sensing.** The PiRacer Pro stack, as shipped and as used here, has no lidar, IMU, encoders, or depth camera in the loop. All autonomy is inferred from a single RGB stream. That limits obstacle avoidance, speed estimation, and robust localization compared with platforms like the Lehigh E116 (RealSense + AprilTags).
 - **Camera and lighting sensitivity.** HSV lane detection works in controlled indoor lighting but degrades quickly with glare, shadows, or tape color drift. Lane keeper is better than line follow on a two-line course, but both are classical CV, not robust to outdoor conditions without more work.
 
 ### Bottom line
 
-The PiRacer Pro + Donkeycar stack is a workable introductory physical-AI platform if you accept manual battery management, legacy Python, a basic camera, and camera-only sensing. It fits RoboRacer-mini's goal of lowering the software barrier versus ROS-first courses. For competition-grade reliability or modern ML tooling, budget time to refresh the OS/Python stack carefully, or treat Donkeycar as a stepping stone and migrate autopilot code to a newer framework once students outgrow the defaults.
+The PiRacer Pro + Donkeycar stack is a workable introductory physical-AI platform if you accept manual battery management, legacy Python, a basic camera, and camera-only sensing. It fits RoboRacer-mini's goal of lowering the software barrier versus ROS-first courses. For competition-grade reliability, budget time to refresh the OS/Python stack carefully, or treat Donkeycar as a stepping stone and migrate autopilot code to a newer framework once students outgrow the defaults.
 
 ---
 
@@ -352,31 +346,29 @@ Line follow and lane keep are a reasonable first closed-loop module. The Donkeyc
 
 | Module | What it adds | Starting point in Donkeycar |
 | --- | --- | --- |
-| **End-to-end ML pilot** | Record human driving in tubs, train a CNN to map image → steering/throttle | `manage.py drive` (record) → `train.py` → `manage.py drive --model=...` |
-| **PyTorch / ResNet pilot** | Stronger vision model than the default linear head | `DEFAULT_MODEL_TYPE = 'resnet18'` in `config.py` |
 | **Path following** | Drive a saved trajectory with PID instead of vision | `PATH_FILENAME`, `PID_P/I/D` in `config.py`; record path with joystick buttons |
 | **Donkey Gym simulator** | Same `manage.py drive` workflow on a virtual track before hardware | `DONKEY_GYM = True` in `config.py`; `donkeycar/mysim/` |
 | **Gap follow (lidar)** | F1TENTH-style steering toward the largest opening in a scan | `USE_LIDAR = True`, `LIDAR_TYPE = 'RP'`; add an RPLidar part in `manage.py` |
 | **Depth-based gap follow** | Obstacle avoidance from a depth image instead of colored tape | `CAMERA_TYPE = "D435"` and a depth-based CV part (see E116 gap follow for the algorithm idea) |
-| **AprilTag / marker localization** | Known pose on a mapped course; corridor or waypoint following | New `cv_parts` or Donkeycar `Localizer` model; Lehigh E116 already uses tag IDs 100–199 / 200+ |
+| **AprilTag / marker localization** | Known pose on a mapped course; corridor or waypoint following | New `cv_parts` or Donkeycar `Localizer` model; Lehigh E116 already uses tag IDs 100-199 / 200+ |
 | **IMU-assisted control** | Yaw rate and acceleration for smoother steering or slip detection | `HAVE_IMU = True`, `IMU_SENSOR = 'mpu6050'` |
 | **Wheel odometry** | Distance and speed from encoder ticks | `HAVE_ODOM = True`; GPIO or Arduino encoder in `manage.py` |
 | **Stop sign / object detector** | Trigger braking when a class is detected in frame | `STOP_SIGN_DETECTOR = True` or a custom detector part |
-| **Fisheye correction** | Straighter lane geometry before CV or ML | `ENABLE_FISHEYE_UNDISTORT = True` after calibration (`calibrate.py`, `undistort.py`) |
+| **Fisheye correction** | Straighter lane geometry before CV | `ENABLE_FISHEYE_UNDISTORT = True` after calibration (`calibrate.py`, `undistort.py`) |
 
-A sensible curriculum after lane keep: (1) record and train a small ML pilot on the same track, (2) add odometry or IMU so throttle scales with actual speed, (3) replace tape following with lidar or depth gap follow, (4) introduce marker-based localization for multi-turn courses.
+A sensible curriculum after lane keep: (1) add odometry or IMU so throttle scales with actual speed, (2) replace tape following with lidar or depth gap follow, (3) introduce marker-based localization for multi-turn courses.
 
 ### What to build on next
 
-**Keep the parts pipeline.** The main value of this repo is that steering, throttle, camera, and autopilot are already wired through named inputs/outputs. New modules should be new Donkeycar `Part` classes (like `cv_parts/lane_keeper.py`) rather than standalone scripts, so they share the web UI, recording, and e-stop paths.
+**Keep the parts pipeline.** The main value of this repo is that steering, throttle, camera, and autopilot are already wired through named inputs/outputs. New modules should be new Donkeycar `Part` classes (like `cv_parts/lane_keeper.py`) rather than standalone scripts, so they share the web UI and e-stop paths.
 
-**Raise image quality before chasing bigger models.** Calibrate fisheye undistort, bump `IMAGE_W` / `IMAGE_H` if the Pi keeps up, and consider a better camera module (Pi Camera Module 3, HQ cam, or a USB camera with a narrower FOV). Better pixels help both classical CV and ML more than a larger network on blurry 160×120 input.
+**Raise image quality first.** Calibrate fisheye undistort, bump `IMAGE_W` / `IMAGE_H` if the Pi keeps up, and consider a better camera module (Pi Camera Module 3, HQ cam, or a USB camera with a narrower FOV). Sharper, less distorted frames help lane keep and gap-follow CV more than any change on a blurry 160×120 stream.
 
 **Modernize the runtime carefully.** Donkeycar is the bottleneck, not the PiRacer hardware. Options: pin a working venv on the Waveshare image for labs, or port the `cv_parts` and teleop layer to a small modern stack (FastAPI web UI + OpenCV + PCA9685) while keeping the same pedagogical progression.
 
-**Borrow from E116 where Donkeycar stops.** The Lehigh stack already implements AprilTag corridor follow and RealSense bring-up. RoboRacer-mini can reuse those *algorithms* inside Donkeycar parts, or run a hybrid: Donkeycar for teleop/record/train, ROS 2 only for advanced modules.
+**Borrow from E116 where Donkeycar stops.** The Lehigh stack already implements AprilTag corridor follow and RealSense bring-up. RoboRacer-mini can reuse those algorithms inside Donkeycar parts, or run a hybrid: Donkeycar for teleop and CV autopilot, ROS 2 only for advanced modules.
 
-**Add closed-loop metrics.** Log lap time, cross-track error, and detection confidence to CSV or MQTT (`HAVE_MQTT_TELEMETRY`). Students need numbers to compare PID tuning, lane keep vs line follow, and ML vs CV.
+**Add closed-loop metrics.** Log lap time, cross-track error, and detection confidence to CSV or MQTT (`HAVE_MQTT_TELEMETRY`). Students need numbers to compare PID tuning and lane keep vs line follow.
 
 ### Sensors for a Donkeycar-inspired RoboRacer-mini
 
@@ -384,7 +376,7 @@ Donkeycar already has hooks for several sensors in `config.py` and `manage.py`. 
 
 | Sensor | Role | How it would plug in | Example use |
 | --- | --- | --- | --- |
-| **Better RGB camera** | Sharper, less distorted images | Set `CAMERA_TYPE` to `PICAM` with a Module 3/HQ cam, or `WEBCAM` / `CVCAM` for USB; keep `ImagePreprocessor` | Lane keep at higher resolution; cleaner ML training data |
+| **Better RGB camera** | Sharper, less distorted images | Set `CAMERA_TYPE` to `PICAM` with a Module 3/HQ cam, or `WEBCAM` / `CVCAM` for USB; keep `ImagePreprocessor` | Lane keep at higher resolution; more reliable line detection |
 | **RPLidar A1/A2** | 2D range scan around the car | `USE_LIDAR = True`; Donkeycar `RPLidar` part publishes scans into the vehicle loop | Gap follow, wall following, simple obstacle stop |
 | **Intel RealSense D435/D435i** | RGB + depth (+ IMU on D435i) | `CAMERA_TYPE = "D435"`; depth array available as `cam/depth_array` | True gap follow on depth slices; obstacle distance without colored walls |
 | **MPU6050 / MPU9250 IMU** | Yaw rate, acceleration | I2C IMU; `HAVE_IMU = True` in `config.py` | Damp steering oscillation; detect spin-out; fuse with vision for short occlusions |
@@ -395,7 +387,7 @@ Donkeycar already has hooks for several sensors in `config.py` and `manage.py`. 
 Typical integration pattern:
 
 ```
-Sensor Part(s)          Vision / CV / ML Part          Actuators
+Sensor Part(s)          Vision / CV Part               Actuators
      |                           |                        |
   lidar scan ──────────► gap_follow.py ──► pilot/angle, pilot/throttle ──► PCA9685
   cam/depth_array ─────►                                    │

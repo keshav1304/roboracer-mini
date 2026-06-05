@@ -18,15 +18,15 @@ Most of the four weeks focus on getting the hardware working: batteries, SSH, PW
 
 ## Table of Contents
 
-1. [Week 1 — Hardware Familiarization &amp; Linux Basics](#week-1)
-2. [Week 2 — Teleop, PWM Tuning &amp; ROS 2 Introduction](#week-2)
-3. [Week 3 — RealSense Camera &amp; AprilTag Detection](#week-3)
-4. [Week 4 — Gap Follow Algorithm](#week-4)
+1. [Week 1 - Hardware Familiarization &amp; Linux Basics](#week-1)
+2. [Week 2 - Teleop, PWM Tuning &amp; ROS 2 Introduction](#week-2)
+3. [Week 3 - RealSense Camera &amp; AprilTag Detection](#week-3)
+4. [Week 4 - Gap Follow Algorithm](#week-4)
 5. [References](#references)
 
 ---
 
-## Week 1 — Hardware Familiarization & Linux Basics
+## Week 1 - Hardware Familiarization & Linux Basics
 
 Covered the E116 car hardware, batteries, motor/ESC, and basic Ubuntu on the Jetson Orin Nano.
 
@@ -91,11 +91,11 @@ python3 script.py    # run Python script
 
 *E116 hardware walkthrough: Jetson, carrier board, RealSense, batteries, and Traxxas chassis*
 
-### Week 1 — Problems Encountered
+### Week 1 - Problems Encountered
 
 LiPo charge settings (voltage/current) were unclear at first. The Traxxas pack had no simple way to see state of charge, and multimeter readings were unreliable. A Traxxas charger with a built-in display was used instead.
 
-## Week 2 — Teleop, PWM Tuning & ROS 2 Introduction
+## Week 2 - Teleop, PWM Tuning & ROS 2 Introduction
 
 Implementing keyboard teleop, PWM tuning for servo and ESC, and an intro to ROS 2 Humble.
 
@@ -111,8 +111,8 @@ Tuned values were saved in `e116.yaml`:
 
 | Parameter              | Typical range   |
 | ---------------------- | --------------- |
-| `motor_forward_start`  | 30.00 – 31.50 % |
-| `motor_backward_start` | 27.50 – 29.00 % |
+| `motor_forward_start`  | 30.00 - 31.50 % |
+| `motor_backward_start` | 27.50 - 29.00 % |
 | `servo_center`         | ~29.70 %        |
 
 <table>
@@ -151,7 +151,7 @@ ros2 run rqt_graph rqt_graph
 
 *Keyboard teleop driving the car over ROS 2*
 
-### Week 2 — Problems Encountered
+### Week 2 - Problems Encountered
 
 The drive battery died quickly during PWM tuning. Full charge (12.6 V on the 3S LiPo) was needed. At 12.3 V runtime was already too short to finish a session. The provided PWM scripts did not work as intended, so we wrote custom scripts. 
 
@@ -159,7 +159,7 @@ Moreover, X11 forwarding did not show the pygame teleop window. A terminal teleo
 
 ---
 
-## Week 3 — RealSense & AprilTags
+## Week 3 - RealSense & AprilTags
 
 ### Overview
 
@@ -219,17 +219,17 @@ ackermann_msgs/AckermannDriveStamped
 
 `e116_racecar` subscribes and converts to servo/ESC PWM.
 
-### Week 3 — Problems Encountered
+### Week 3 - Problems Encountered
 
 No problems from Week 3 content.
 
 ---
 
-## Week 4 — Gap Follow & Race Prep
+## Week 4 - Gap Follow & Race Prep
 
 ### Overview
 
-Ran autonomous gap follow with AprilTags on the left wall (IDs 100–199) and right wall (200+) definining a corridor and the car steering toward the midpoint.
+Ran autonomous gap follow with AprilTags on the left wall (IDs 100-199) and right wall (200+) definining a corridor and the car steering toward the midpoint.
 
 ### Key Concepts
 
@@ -266,7 +266,7 @@ Main tunables were `SPEED1`, `SPEED2`, `angle_scale`, `SINGLE_TAG_OFFSET`, `t_ke
 
 *Autonomous navigation using Follow the Gap algorithm*
 
-### Week 4 — Problems Encountered
+### Week 4 - Problems Encountered
 
 With one tag visible, the stock controller used a fixed `turningAngle` and the car jerked sideways. That was replaced with steering toward an offset goal (`SINGLE_TAG_OFFSET`) when only one wall tag is seen.
 
@@ -295,7 +295,7 @@ Thank you to Professor Rosa Zheng for the E116 platform, carrier board, and lab 
 
 ---
 
-*Compiled from ECE lab weeks 1–4. Hardware and parameters match the Lehigh E116 car.*
+*Compiled from ECE lab weeks 1-4. Hardware and parameters match the Lehigh E116 car.*
 
 ---
 
@@ -307,8 +307,8 @@ Notes below come from running the E116 stack and thinking about what to keep or 
 
 - Traxxas 1/16 E-Revo VXL: Traxxas quotes ~1.09 kg for the roller alone. With Jetson, carrier, RealSense, extra LiPo, and brackets, the suspension arms and plastic parts flex noticeably, and that affects drive performance and durability. And it could lead to very quick structural damage. 
 
-- Jetson Orin Nano: Weeks 1–4 did not need the GPU; AprilTag gap follow ran on CPU via `apriltag_ros`. Students still manage JetPack Linux, two power sources, WiFi + SSH, GPIO/PWM on the custom carrier, and slow rebuilds on the board. Jetson makes sense for later vision/ML modules; smaller classes might share a few boards or use lighter compute for the first half of the course.
+- Jetson Orin Nano: Weeks 1-4 did not need the GPU; AprilTag gap follow ran on CPU via `apriltag_ros`. Students still manage JetPack Linux, two power sources, WiFi + SSH, GPIO/PWM on the custom carrier, and slow rebuilds on the board. Jetson makes sense for later vision/ML modules; smaller classes might share a few boards or use lighter compute for the first half of the course.
 
 - BOM: Roughly $1,200-1,600 per car if you price Jetson ($249), Traxxas ($300), D435i ($350-450), LiPo/charger, E116 power board, and track/tags/spares.
 
-- E116 gap follow: This is AprilTag corridor following (midpoint between 100-series and 200-series tags), not the [F1TENTH follow-the-gap lab](https://f1tenth-coursekit.readthedocs.io/en/stable/assignments/labs/lab4.html) on lidar or a depth scan. It is a reasonable first closed-loop autonomy assignment on a marked course. The RealSense depth stream is barely used. Single-tag cases needed code changes. Autonomous speeds in practice were much lower than the template defaults (on the order of 0.1–0.15 m/s vs 0.75–1.2 m/s). Worth keeping as an early module, but should follow with real depth-based gap follow so the name matches what students read elsewhere.
+- E116 gap follow: This is AprilTag corridor following (midpoint between 100-series and 200-series tags), not the [F1TENTH follow-the-gap lab](https://f1tenth-coursekit.readthedocs.io/en/stable/assignments/labs/lab4.html) on lidar or a depth scan. It is a reasonable first closed-loop autonomy assignment on a marked course. The RealSense depth stream is barely used. Single-tag cases needed code changes. Autonomous speeds in practice were much lower than the template defaults (on the order of 0.1-0.15 m/s vs 0.75-1.2 m/s). Worth keeping as an early module, but should follow with real depth-based gap follow so the name matches what students read elsewhere.

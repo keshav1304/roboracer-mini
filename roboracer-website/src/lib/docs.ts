@@ -77,6 +77,9 @@ export function preprocessDocMarkdown(content: string, assetBase: DocSlug): stri
 
   processed = processed.replace(/\$([^$\n]+)\$/g, "`$1`");
 
+  // Section headings already render a top border; drop markdown thematic breaks.
+  processed = processed.replace(/\n(?:---|\*\*\*|___)\n/g, "\n\n");
+
   return processed;
 }
 
