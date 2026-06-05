@@ -10,11 +10,7 @@ Most of the four weeks focus on getting the hardware working: batteries, SSH, PW
 
 [![Hardware overview](https://img.youtube.com/vi/1DGavq1OEdM/hqdefault.jpg)](https://youtu.be/1DGavq1OEdM)
 
-*E116 hardware walkthrough*
-
 [![Follow the gap](https://img.youtube.com/vi/t0ZZ9GUBdJ0/hqdefault.jpg)](https://youtu.be/t0ZZ9GUBdJ0)
-
-*Follow the Gap algorithm*
 
 ## Table of Contents
 
@@ -45,11 +41,7 @@ The onboard checker beeps is LiPo hits near 3.5 V. For desk work the LiPo can be
 
 [![Charging Traxxas NiMH](https://img.youtube.com/vi/BVJqiAOtouw/hqdefault.jpg)](https://www.youtube.com/shorts/BVJqiAOtouw)
 
-*Charging the Traxxas NiMH drive battery*
-
 [![Charging Ovonic LiPo](https://img.youtube.com/vi/CKEU-UIINII/hqdefault.jpg)](https://www.youtube.com/shorts/CKEU-UIINII)
-
-*Charging the Ovonic 3S LiPo used to power the Jetson*
 
 #### 1.2 Motor & ESC
 
